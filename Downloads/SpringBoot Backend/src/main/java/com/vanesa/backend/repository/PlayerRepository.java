@@ -12,14 +12,18 @@ import java.util.UUID;
 
 @Repository
 public interface PlayerRepository extends JpaRepository<Player, UUID> {
+
     Optional<Player> findByUsername(String username);
+
     boolean existsByUsername(String username);
 
-    @Query("SELECT p FROM Player p ORDER BY p.highScore DESC")
-    List<Player> findTOpPlayersByHighScore(@Param("limit") int limit);
+    @Query("SELECT p FROM Player p ORDER BY p.highScore DESC LIMIT :limit")
+    List<Player> findTopPlayersByHighScore(@Param("limit") int limit);
 
     List<Player> findByHighScoreGreaterThan(Integer minScore);
+
     List<Player> findAllByOrderByTotalCoinsDesc();
 
-    List<Player> findAllByOrderByTotalDistanceDesc();
+    // Metode dengan typo sudah dihapus. Ini adalah satu-satunya versi yang benar.
+    List<Player> findAllByOrderByTotalDistanceTravelledDesc();
 }
