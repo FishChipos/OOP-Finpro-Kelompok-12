@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.utils.TimeUtils;
 import com.sundaempire.frontend.gamemanager.GameManager;
 import com.sundaempire.frontend.gamemap.GameMap;
 import com.sundaempire.frontend.gamemap.tile.TileFactory;
@@ -43,7 +44,7 @@ public class Main extends ApplicationAdapter {
         // Wait for the game manager to finish loading assets.
         GameManager.INSTANCE.getAssetManager().finishLoading();
 
-        tileFactory = new TileFactory();
+        tileFactory = new TileFactory(TimeUtils.millis(), 8);
         gameMap = new GameMap(new Vector2(screenWidth / 2f, screenHeight / 2f), TILE_DIMENSIONS, GAME_MAP_COLUMNS, GAME_MAP_ROWS, GAME_MAP_GRID_LINE_THICKNESS, tileFactory, camera);
         gameMap.registerInputProcessor(inputMultiplexer);
 

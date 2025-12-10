@@ -48,8 +48,10 @@ public class GameMap {
     }
 
     private void generateTiles() {
-        for (int tileIndex = tiles.size(); tileIndex < rows * columns; ++tileIndex) {
-            tiles.add(tileFactory.createRandom());
+        for (int row = 0; row < rows; ++row) {
+            for (int column = 0; column < columns; ++column) {
+                tiles.add(tileFactory.createRandom(column, row));
+            }
         }
     }
 

@@ -5,11 +5,18 @@ import com.badlogic.gdx.math.Vector2;
 import com.sundaempire.frontend.gamemap.tile.environments.TileEnvironmentGrass;
 import com.sundaempire.frontend.gamemap.tile.environments.TileEnvironmentMountain;
 import com.sundaempire.frontend.gamemap.tile.environments.TileEnvironmentWater;
+import com.sundaempire.frontend.noise.NoisePerlin;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class TileFactory {
+    private final NoisePerlin noise;
+
+    public TileFactory(long seed, int gridSize) {
+        noise = new NoisePerlin(seed, gridSize);
+    }
+
     public Tile create(Vector2 tilePosition, Vector2 tileDimensions, TileEnvironment tileEnvironment, List<TileProp> tileProps) {
         Tile tile = new Tile();
         tile.setEnvironment(tileEnvironment);
@@ -29,13 +36,13 @@ public class TileFactory {
         return tile;
     }
 
-    public Tile createRandom() {
-        int random = MathUtils.random(100);
+    public Tile createRandom(float x, float y) {
+        float random = (noise.generate(x, y) + 1f) / 2f;
 
-        if (random <= 50) {
+        if (random <= 0.5f) {
             return create(new Vector2(0f, 0f), new Vector2(0f, 0f), new TileEnvironmentGrass(), new ArrayList<>());
         }
-        else if (random <= 75) {
+        else if (random <= 0.75f) {
             return create(new Vector2(0f, 0f), new Vector2(0f, 0f), new TileEnvironmentWater(), new ArrayList<>());
         }
         else {
