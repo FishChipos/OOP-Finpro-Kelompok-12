@@ -14,6 +14,8 @@ public enum GameManager {
 
     public void loadAssets() {
         assetManager.load("textures/tiles/grass.png", Texture.class);
+        assetManager.load("textures/tiles/water.png", Texture.class);
+        assetManager.load("textures/tiles/mountain.png", Texture.class);
     }
 
     public AssetManager getAssetManager() {

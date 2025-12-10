@@ -2,20 +2,20 @@ package com.sundaempire.frontend.gamemap.tile;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 abstract public class TileEnvironment {
-    private final Vector2 position = new Vector2();
-    private final Vector2 dimensions = new Vector2();
+    private final Rectangle collider = new Rectangle();
 
     private Texture texture;
 
     public void setPosition(Vector2 position) {
-        this.position.set(position);
+        collider.setPosition(position);
     }
 
     public void setDimensions(Vector2 dimensions) {
-        this.dimensions.set(dimensions);
+        collider.setSize(dimensions.x, dimensions.y);
     }
 
     public void setTexture(Texture texture) {
@@ -23,7 +23,7 @@ abstract public class TileEnvironment {
     }
 
     public void render(SpriteBatch batch) {
-        batch.draw(texture, position.x, position.y, dimensions.x, dimensions.y);
+        batch.draw(texture, collider.x, collider.y, collider.width, collider.height);
     }
 
     public void dispose() {

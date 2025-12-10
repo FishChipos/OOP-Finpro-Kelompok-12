@@ -32,17 +32,19 @@ public class Main extends ApplicationAdapter {
         screenWidth = Gdx.graphics.getWidth();
         screenHeight = Gdx.graphics.getHeight();
 
-        camera = new OrthographicCamera();
+        camera = new OrthographicCamera(screenWidth, screenHeight);
+        camera.position.set(camera.viewportWidth / 2f, camera.viewportHeight / 2f, 0f);
+        camera.update();
         batch = new SpriteBatch();
         inputMultiplexer = new InputMultiplexer();
 
         GameManager.INSTANCE.loadAssets();
 
         // Wait for the game manager to finish loading assets.
-        while (!GameManager.INSTANCE.getAssetManager().update());
+        GameManager.INSTANCE.getAssetManager().finishLoading();
 
         tileFactory = new TileFactory();
-        gameMap = new GameMap(new Vector2(screenWidth / 2f, screenHeight / 2f), TILE_DIMENSIONS, GAME_MAP_COLUMNS, GAME_MAP_ROWS, GAME_MAP_GRID_LINE_THICKNESS, tileFactory);
+        gameMap = new GameMap(new Vector2(screenWidth / 2f, screenHeight / 2f), TILE_DIMENSIONS, GAME_MAP_COLUMNS, GAME_MAP_ROWS, GAME_MAP_GRID_LINE_THICKNESS, tileFactory, camera);
         gameMap.registerInputProcessor(inputMultiplexer);
 
         Gdx.input.setInputProcessor(inputMultiplexer);
@@ -50,6 +52,8 @@ public class Main extends ApplicationAdapter {
 
     @Override
     public void render() {
+        camera.update();
+        batch.setProjectionMatrix(camera.combined);
         gameMap.update();
 
         ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);

@@ -1,7 +1,10 @@
 package com.sundaempire.frontend.gamemap.tile;
 
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.sundaempire.frontend.gamemap.tile.environments.TileEnvironmentGrass;
+import com.sundaempire.frontend.gamemap.tile.environments.TileEnvironmentMountain;
+import com.sundaempire.frontend.gamemap.tile.environments.TileEnvironmentWater;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,20 +12,39 @@ import java.util.List;
 public class TileFactory {
     public Tile create(Vector2 tilePosition, Vector2 tileDimensions, TileEnvironment tileEnvironment, List<TileProp> tileProps) {
         Tile tile = new Tile();
+        tile.setEnvironment(tileEnvironment);
+
         tile.setPosition(tilePosition);
         tile.setDimensions(tileDimensions);
 
-        tile.setEnvironment(tileEnvironment);
+        tileEnvironment.setPosition(tilePosition);
+        tileEnvironment.setPosition(tileDimensions);
 
         for (TileProp tileProp : tileProps) {
+            tileProp.setPosition(tilePosition);
+            tileProp.setDimensions(tileDimensions);
             tile.addProp(tileProp);
         }
 
         return tile;
     }
 
-    public Tile createRandom(Vector2 tilePosition, Vector2 tileDimensions) {
-        TileEnvironment tileEnvironment = new TileEnvironmentGrass();
-        return create(tilePosition, tileDimensions, tileEnvironment, new ArrayList<TileProp>());
+    public Tile createRandom() {
+        int random = MathUtils.random(100);
+
+        if (random <= 50) {
+            return create(new Vector2(0f, 0f), new Vector2(0f, 0f), new TileEnvironmentGrass(), new ArrayList<>());
+        }
+        else if (random <= 75) {
+            return create(new Vector2(0f, 0f), new Vector2(0f, 0f), new TileEnvironmentWater(), new ArrayList<>());
+        }
+        else {
+            return create(new Vector2(0f, 0f), new Vector2(0f, 0f), new TileEnvironmentMountain(), new ArrayList<>());
+        }
+
+    }
+
+    public Tile createDefault() {
+        return create(new Vector2(0f, 0f), new Vector2(0f, 0f), new TileEnvironmentGrass(), new ArrayList<>());
     }
 }
