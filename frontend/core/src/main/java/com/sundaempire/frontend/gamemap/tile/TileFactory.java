@@ -37,13 +37,13 @@ public class TileFactory {
     }
 
     public Tile createRandom(float x, float y) {
-        float random = (noise.generate(x, y) + 1f) / 2f;
+        float random = noise.generate(x, y);
 
-        if (random <= 0.5f) {
-            return create(new Vector2(0f, 0f), new Vector2(0f, 0f), new TileEnvironmentGrass(), new ArrayList<>());
-        }
-        else if (random <= 0.75f) {
+        if (random <= 0.33f) {
             return create(new Vector2(0f, 0f), new Vector2(0f, 0f), new TileEnvironmentWater(), new ArrayList<>());
+        }
+        else if (random <= 0.66f) {
+            return create(new Vector2(0f, 0f), new Vector2(0f, 0f), new TileEnvironmentGrass(), new ArrayList<>());
         }
         else {
             return create(new Vector2(0f, 0f), new Vector2(0f, 0f), new TileEnvironmentMountain(), new ArrayList<>());

@@ -44,7 +44,7 @@ public class Main extends ApplicationAdapter {
         // Wait for the game manager to finish loading assets.
         GameManager.INSTANCE.getAssetManager().finishLoading();
 
-        tileFactory = new TileFactory(TimeUtils.millis(), 8);
+        tileFactory = new TileFactory(TimeUtils.millis(), 4);
         gameMap = new GameMap(new Vector2(screenWidth / 2f, screenHeight / 2f), TILE_DIMENSIONS, GAME_MAP_COLUMNS, GAME_MAP_ROWS, GAME_MAP_GRID_LINE_THICKNESS, tileFactory, camera);
         gameMap.registerInputProcessor(inputMultiplexer);
 

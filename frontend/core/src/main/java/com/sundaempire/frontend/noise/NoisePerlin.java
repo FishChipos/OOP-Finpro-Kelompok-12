@@ -35,7 +35,9 @@ public class NoisePerlin {
         float dySmooth = smoothstep(dy);
 
         float noise = lerp(dySmooth, lerp(dxSmooth, dot00, dot10), lerp(dxSmooth, dot01, dot11));
-        noise *= (float)Math.sqrt(2f);
+        noise *= 2f;
+        noise += 1f;
+        noise /= 2f;
 
         return noise;
     }
