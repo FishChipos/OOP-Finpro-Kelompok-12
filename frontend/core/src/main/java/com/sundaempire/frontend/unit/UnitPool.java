@@ -1,4 +1,6 @@
 package com.sundaempire.frontend.unit;
 
-public class UnitPool {
+public interface UnitPool {
+    Unit obtain();
+    void free(Unit unit);
 }
