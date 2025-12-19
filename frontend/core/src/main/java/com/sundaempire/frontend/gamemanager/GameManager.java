@@ -16,6 +16,13 @@ public enum GameManager {
         assetManager.load("textures/tiles/grass.png", Texture.class);
         assetManager.load("textures/tiles/water.png", Texture.class);
         assetManager.load("textures/tiles/mountain.png", Texture.class);
+
+        assetManager.load("textures/buildings/farm.png", Texture.class);
+        assetManager.load("textures/buildings/guard_tower.png", Texture.class);
+    }
+
+    public void finishLoading() {
+        assetManager.finishLoading();
     }
 
     public AssetManager getAssetManager() {
