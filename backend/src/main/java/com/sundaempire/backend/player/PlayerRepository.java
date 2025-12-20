@@ -1,0 +1,16 @@
+package com.sundaempire.backend.player;
+
+import org.jspecify.annotations.NonNull;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
+import java.util.UUID;
+
+@Repository
+public interface PlayerRepository extends JpaRepository<@NonNull Player, @NonNull UUID> {
+    Optional<Player> findPlayerById(UUID id);
+    Optional<Player> findPlayerByUsername(String username);
+
+    boolean existsByUsername(String username);
+}
