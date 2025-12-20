@@ -24,5 +24,4 @@ public class UnitFactory {
                 throw new IllegalArgumentException("Unknown unit type");
         }
     }
-
 }

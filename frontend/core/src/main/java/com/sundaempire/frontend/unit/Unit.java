@@ -56,4 +56,3 @@ public class Unit {
         health -= amount;
     }
 }
-
