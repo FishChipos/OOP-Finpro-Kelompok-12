@@ -1,21 +1,43 @@
 package com.sundaempire.frontend.ui.states;
 
-import com.sundaempire.frontend.ui.UIState;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.InputMultiplexer;
 import com.sundaempire.frontend.ui.UI;
+import com.sundaempire.frontend.ui.UIState;
 
 public class UIMainMenuState implements UIState {
-    private final UI ui;
 
-    public UIMainMenuState(UI ui) {
+    private final UI ui;
+    private final UIState gameState;
+    private InputAdapter inputProcessor;
+
+    public UIMainMenuState(UI ui, UIState gameState) {
         this.ui = ui;
+        this.gameState = gameState;
     }
 
     @Override
     public void onEnter() {
+        inputProcessor = new InputAdapter() {
+            @Override
+            public boolean keyDown(int keycode) {
+                if (keycode == Input.Keys.ENTER) {
+                    ui.setState(gameState);
+                    return true;
+                }
+                if (keycode == Input.Keys.ESCAPE) {
+                    System.exit(0);
+                    return true;
+                }
+                return false;
+            }
+        };
     }
 
     @Override
     public void onExit() {
+        inputProcessor = null;
     }
 
     @Override
@@ -27,14 +49,12 @@ public class UIMainMenuState implements UIState {
     }
 
     @Override
-    public void handleInput() {
+    public void registerInputProcessor(InputMultiplexer multiplexer) {
+        multiplexer.addProcessor(inputProcessor);
     }
 
-    public void startGame(UIState gameState) {
-        ui.setState(gameState);
-    }
-
-    public void exitGame() {
-        System.exit(0);
+    @Override
+    public void unregisterInputProcessor(InputMultiplexer multiplexer) {
+        multiplexer.removeProcessor(inputProcessor);
     }
 }

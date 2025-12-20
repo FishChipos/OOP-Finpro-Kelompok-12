@@ -1,14 +1,26 @@
 package com.sundaempire.frontend.ui;
 
-public class UI {
-    private UIState currentState;
+import com.badlogic.gdx.InputMultiplexer;
 
-    public void setState(UIState state) {
+public class UI {
+
+    private UIState currentState;
+    private final InputMultiplexer multiplexer;
+
+    public UI(InputMultiplexer multiplexer) {
+        this.multiplexer = multiplexer;
+    }
+
+    public void setState(UIState newState) {
         if (currentState != null) {
+            currentState.unregisterInputProcessor(multiplexer);
             currentState.onExit();
         }
-        currentState = state;
+
+        currentState = newState;
+
         if (currentState != null) {
+            currentState.registerInputProcessor(multiplexer);
             currentState.onEnter();
         }
     }
@@ -22,12 +34,6 @@ public class UI {
     public void render() {
         if (currentState != null) {
             currentState.render();
-        }
-    }
-
-    public void handleInput() {
-        if (currentState != null) {
-            currentState.handleInput();
         }
     }
 }
