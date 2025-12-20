@@ -13,6 +13,11 @@ public class GameMap {
     @Column(name = "id")
     private Long id;
 
+    @OneToOne
+    @JoinColumn(name = "save_id")
+    @JsonIgnore
+    private Save save;
+
     @OneToMany(mappedBy = "gameMap", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Tile> tiles;
 
@@ -21,6 +26,10 @@ public class GameMap {
     }
 
     public void setTiles(List<Tile> tiles) {
+        for (Tile tile : tiles) {
+            tile.setGameMap(this);
+        }
+
         this.tiles = tiles;
     }
 
@@ -30,5 +39,13 @@ public class GameMap {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Save getSave() {
+        return save;
+    }
+
+    public void setSave(Save save) {
+        this.save = save;
     }
 }

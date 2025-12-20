@@ -36,13 +36,13 @@ public class Save {
     @Column(name = "score", nullable = false, updatable = false)
     private Integer score = 0;
 
-    @OneToOne(cascade = CascadeType.ALL, optional = false)
+    @OneToOne(mappedBy = "save", cascade = CascadeType.ALL, orphanRemoval = true)
     private GameMap gameMap;
 
-    @OneToMany(mappedBy = "save", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "save", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Unit> units = new ArrayList<>();
 
-    @OneToMany(mappedBy = "save", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "save", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Settlement> settlements = new ArrayList<>();
 
     @CreationTimestamp
@@ -92,6 +92,7 @@ public class Save {
     }
 
     public void setGameMap(GameMap gameMap) {
+        gameMap.setSave(this);
         this.gameMap = gameMap;
     }
 
@@ -116,6 +117,10 @@ public class Save {
     }
 
     public void setUnits(List<Unit> units) {
+        for (Unit unit : units) {
+            unit.setSave(this);
+        }
+
         this.units = units;
     }
 
@@ -124,6 +129,10 @@ public class Save {
     }
 
     public void setSettlements(List<Settlement> settlements) {
+        for (Settlement settlement : settlements) {
+            settlement.setSave(this);
+        }
+
         this.settlements = settlements;
     }
 }

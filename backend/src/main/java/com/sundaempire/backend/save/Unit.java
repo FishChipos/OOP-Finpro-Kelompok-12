@@ -11,11 +11,8 @@ public class Unit {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "save_id")
-    private Long saveId;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "save_id", referencedColumnName = "id", insertable = false, updatable = false)
+    @ManyToOne
+    @JoinColumn(name = "save_id")
     @JsonIgnore
     private Save save;
 
@@ -23,7 +20,11 @@ public class Unit {
     private String type;
 
     @Column(name = "player_controlled", nullable = false)
-    private boolean playerControlled = false;
+    private boolean playerControlled = true;
+
+    @Column(name = "owner", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private GameObjectOwner owner = GameObjectOwner.PLAYER_1;
 
     public Long getId() {
         return id;
@@ -39,6 +40,14 @@ public class Unit {
 
     public void setSave(Save save) {
         this.save = save;
+    }
+
+    public GameObjectOwner getOwner() {
+        return owner;
+    }
+
+    public void setOwner(GameObjectOwner owner) {
+        this.owner = owner;
     }
 
     public String getType() {
