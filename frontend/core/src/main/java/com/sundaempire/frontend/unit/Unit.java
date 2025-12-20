@@ -1,28 +1,44 @@
 package com.sundaempire.frontend.unit;
 
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Vector2;
+public class Unit {
 
-public abstract class Unit {
+    private String name;
+    private int health;
+    private int attack;
 
-    protected Vector2 position;
-    protected Vector2 size;
+    private int maxMovementPoints;
+    private int movementPoints;
 
-    protected UnitState currentState;
+    private UnitState currentState;
 
-    public Unit(Vector2 position, Vector2 size) {
-        this.position = new Vector2(position);
-        this.size = new Vector2(size);
+    public Unit(String name, int health, int attack, int maxMovementPoints) {
+        this.name = name;
+        this.health = health;
+        this.attack = attack;
+        this.maxMovementPoints = maxMovementPoints;
+        this.movementPoints = maxMovementPoints;
     }
 
-    public void setState(UnitState newState) {
+    public void startTurn() {
+        movementPoints = maxMovementPoints;
+    }
+
+    public boolean canMove() {
+        return movementPoints > 0;
+    }
+
+    public void move() {
+        if (movementPoints > 0) {
+            movementPoints--;
+        }
+    }
+
+    public void changeState(UnitState newState) {
         if (currentState != null) {
             currentState.exit(this);
         }
         currentState = newState;
-        if (currentState != null) {
-            currentState.enter(this);
-        }
+        currentState.enter(this);
     }
 
     public void update(float delta) {
@@ -31,21 +47,13 @@ public abstract class Unit {
         }
     }
 
-    public abstract void render(SpriteBatch batch);
+    public String getName() { return name; }
+    public int getHealth() { return health; }
+    public int getAttack() { return attack; }
+    public int getMovementPoints() { return movementPoints; }
 
-    public void dispose() {
-
-    }
-
-    public Vector2 getPosition() {
-        return position;
-    }
-
-    public void setPosition(Vector2 position) {
-        this.position.set(position);
-    }
-
-    public Vector2 getSize() {
-        return size;
+    public void damage(int amount) {
+        health -= amount;
     }
 }
+
