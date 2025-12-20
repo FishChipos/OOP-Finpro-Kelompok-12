@@ -3,7 +3,9 @@ package com.sundaempire.backend.save;
 import com.sundaempire.backend.player.Player;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.cglib.core.Local;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -12,7 +14,7 @@ import java.util.UUID;
 @Table(name = "saves")
 public class Save {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     @Column(name = "id")
     private Long id;
 
@@ -40,6 +42,22 @@ public class Save {
 
     public Save(Integer score) {
         this.score = score;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
     public Integer getScore() {

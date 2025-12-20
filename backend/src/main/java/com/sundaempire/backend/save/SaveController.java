@@ -1,21 +1,17 @@
 package com.sundaempire.backend.save;
 
-import com.sundaempire.backend.BackendErrorCompatible;
+import com.sundaempire.backend.ErrorResponseCompatible;
 import org.jspecify.annotations.NonNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.ErrorResponseException;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("api/saves")
-public class SaveController implements BackendErrorCompatible {
+public class SaveController implements ErrorResponseCompatible {
     private final SaveService saveService;
 
     public SaveController(SaveService saveService) {
@@ -35,19 +31,52 @@ public class SaveController implements BackendErrorCompatible {
             Save save = saveService.findSaveById(id);
             return ResponseEntity.status(HttpStatus.OK).body(save);
         }
-        catch (RuntimeException e) {
-            return parseError(e);
+        catch (ErrorResponseException e) {
+            return parseErrorResponse(e);
         }
     }
 
     @GetMapping("/player/{playerId}")
-    public ResponseEntity<?> getSavesByPlayerId(@PathVariable UUID playerId) {
+    public ResponseEntity<?> getSavesByPlayerId(@PathVariable Long playerId) {
         try {
             List<Save> saves = saveService.findSavesByPlayerId(playerId);
             return ResponseEntity.status(HttpStatus.OK).body(saves);
         }
-        catch (RuntimeException e) {
-            return parseError(e);
+        catch (ErrorResponseException e) {
+            return parseErrorResponse(e);
+        }
+    }
+
+    @PostMapping
+    public ResponseEntity<?> postSave(@RequestBody Save save) {
+        try {
+            Save createdSave = saveService.createSave(save);
+            return ResponseEntity.status(HttpStatus.OK).body(createdSave);
+        }
+        catch (ErrorResponseException e) {
+            return parseErrorResponse(e);
+        }
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> putSaveById(@PathVariable Long id, @RequestBody Save save) {
+        try {
+            Save updatedSave = saveService.updateSaveById(id, save);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(updatedSave);
+        }
+        catch (ErrorResponseException e) {
+            return parseErrorResponse(e);
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteSaveById(@PathVariable Long id) {
+        try {
+            saveService.deleteSaveById(id);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        }
+        catch (ErrorResponseException e) {
+            return parseErrorResponse(e);
         }
     }
 }
