@@ -11,16 +11,17 @@ public class Settlement {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "save_id")
-    private Long saveId;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "save_id", referencedColumnName = "id", insertable = false, updatable = false)
+    @ManyToOne
+    @JoinColumn(name = "save_id")
     @JsonIgnore
     private Save save;
 
     @Column(name = "player_controlled", nullable = false)
-    private boolean playerControlled = false;
+    private boolean playerControlled = true;
+
+    @Column(name = "owner", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private GameObjectOwner owner = GameObjectOwner.PLAYER_1;
 
     public Long getId() {
         return id;
@@ -36,6 +37,14 @@ public class Settlement {
 
     public void setSave(Save save) {
         this.save = save;
+    }
+
+    public GameObjectOwner getOwner() {
+        return owner;
+    }
+
+    public void setOwner(GameObjectOwner owner) {
+        this.owner = owner;
     }
 
     public boolean isPlayerControlled() {
