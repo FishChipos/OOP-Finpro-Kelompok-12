@@ -15,6 +15,8 @@ import com.sundaempire.frontend.unit.Unit;
 import com.sundaempire.frontend.unit.UnitFactory;
 import com.sundaempire.frontend.unit.UnitPool;
 
+import java.util.List;
+
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class Main extends ApplicationAdapter {
     private static final Vector2 TILE_DIMENSIONS = new Vector2(20f, 20f);
@@ -32,6 +34,8 @@ public class Main extends ApplicationAdapter {
     private UnitFactory unitFactory;
     private UnitPool unitPool;
     private Unit exampleUnit;
+    private Unit explorerUnit;
+    private List<Unit> explorerGroup;
 
     private float screenWidth, screenHeight;
 
@@ -60,7 +64,14 @@ public class Main extends ApplicationAdapter {
         unitPool = new UnitPool();
 
         exampleUnit = unitPool.obtain(unitFactory, UnitFactory.UnitType.SWORDSMAN);
+        explorerUnit = unitPool.obtain(unitFactory, UnitFactory.UnitType.EXPLORER);
+        explorerGroup = unitFactory.createUnits(UnitFactory.UnitType.EXPLORER, 3);
 
+        exampleUnit.startTurn();
+        explorerUnit.startTurn();
+        for (Unit u : explorerGroup) {
+            u.startTurn();
+        }
 
         Gdx.input.setInputProcessor(inputMultiplexer);
     }
@@ -73,6 +84,10 @@ public class Main extends ApplicationAdapter {
 
         //update unit (logic only belum render)
         exampleUnit.update(Gdx.graphics.getDeltaTime());
+        explorerUnit.update(Gdx.graphics.getDeltaTime());
+        for (Unit u : explorerGroup) {
+            u.update(Gdx.graphics.getDeltaTime());
+        }
 
         ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
         batch.begin();
@@ -98,6 +113,12 @@ public class Main extends ApplicationAdapter {
         batch.dispose();
         gameMap.dispose();
 
-        unitPool.free(exampleUnit);
+        if (exampleUnit != null) unitPool.free(exampleUnit);
+        if (explorerUnit != null) unitPool.free(explorerUnit);
+        if (explorerGroup != null) {
+            for (Unit u : explorerGroup) {
+                unitPool.free(u);
+            }
+        }
     }
 }
