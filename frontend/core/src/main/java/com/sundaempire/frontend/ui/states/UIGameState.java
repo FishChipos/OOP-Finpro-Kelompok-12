@@ -20,23 +20,11 @@ public class UIGameState implements UIState {
 
     @Override
     public void onEnter() {
-        inputProcessor = new InputAdapter() {
-            @Override
-            public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-                if (button == Input.Buttons.RIGHT && selectedUnit != null) {
-                    Vector3 worldPos = camera.unproject(new Vector3(screenX, screenY, 0));
-                    selectedUnit.moveTo(worldPos.x, worldPos.y);
-                    return true;
-                }
-                return false;
-            }
-        };
     }
 
     @Override
     public void onExit() {
         selectedUnit = null;
-        inputProcessor = null;
     }
 
     @Override
@@ -49,12 +37,25 @@ public class UIGameState implements UIState {
 
     @Override
     public void registerInputProcessor(InputMultiplexer multiplexer) {
-        multiplexer.addProcessor(inputProcessor);
+        inputProcessor = new InputAdapter() {
+            @Override
+            public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+                if (button == Input.Buttons.RIGHT && selectedUnit != null) {
+                    Vector3 worldPos = camera.unproject(new Vector3(screenX, screenY, 0));
+                    selectedUnit.moveTo(worldPos.x, worldPos.y);
+                    return true;
+                }
+                return false;
+            }
+        };
+
+        multiplexer.addProcessor(0, inputProcessor);
     }
 
     @Override
     public void unregisterInputProcessor(InputMultiplexer multiplexer) {
         multiplexer.removeProcessor(inputProcessor);
+        inputProcessor = null;
     }
 
     public void selectUnit(Unit unit) {

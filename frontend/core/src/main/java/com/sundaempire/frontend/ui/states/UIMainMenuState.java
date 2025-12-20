@@ -19,6 +19,22 @@ public class UIMainMenuState implements UIState {
 
     @Override
     public void onEnter() {
+    }
+
+    @Override
+    public void onExit() {
+    }
+
+    @Override
+    public void update(float deltaTime) {
+    }
+
+    @Override
+    public void render() {
+    }
+
+    @Override
+    public void registerInputProcessor(InputMultiplexer multiplexer) {
         inputProcessor = new InputAdapter() {
             @Override
             public boolean keyDown(int keycode) {
@@ -33,28 +49,13 @@ public class UIMainMenuState implements UIState {
                 return false;
             }
         };
-    }
 
-    @Override
-    public void onExit() {
-        inputProcessor = null;
-    }
-
-    @Override
-    public void update(float deltaTime) {
-    }
-
-    @Override
-    public void render() {
-    }
-
-    @Override
-    public void registerInputProcessor(InputMultiplexer multiplexer) {
-        multiplexer.addProcessor(inputProcessor);
+        multiplexer.addProcessor(0, inputProcessor);
     }
 
     @Override
     public void unregisterInputProcessor(InputMultiplexer multiplexer) {
         multiplexer.removeProcessor(inputProcessor);
+        inputProcessor = null;
     }
 }
