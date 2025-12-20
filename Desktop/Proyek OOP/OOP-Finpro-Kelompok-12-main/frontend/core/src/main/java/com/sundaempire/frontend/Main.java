@@ -11,6 +11,9 @@ import com.badlogic.gdx.utils.TimeUtils;
 import com.sundaempire.frontend.gamemanager.GameManager;
 import com.sundaempire.frontend.gamemap.GameMap;
 import com.sundaempire.frontend.gamemap.tile.TileFactory;
+import com.sundaempire.frontend.unit.Unit;
+import com.sundaempire.frontend.unit.UnitFactory;
+import com.sundaempire.frontend.unit.UnitPool;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class Main extends ApplicationAdapter {
@@ -25,6 +28,10 @@ public class Main extends ApplicationAdapter {
 
     private TileFactory tileFactory;
     private GameMap gameMap;
+
+    private UnitFactory unitFactory;
+    private UnitPool unitPool;
+    private Unit exampleUnit;
 
     private float screenWidth, screenHeight;
 
@@ -48,6 +55,13 @@ public class Main extends ApplicationAdapter {
         gameMap = new GameMap(new Vector2(screenWidth / 2f, screenHeight / 2f), TILE_DIMENSIONS, GAME_MAP_COLUMNS, GAME_MAP_ROWS, GAME_MAP_GRID_LINE_THICKNESS, tileFactory, camera);
         gameMap.registerInputProcessor(inputMultiplexer);
 
+        //Unit system
+        unitFactory = new UnitFactory();
+        unitPool = new UnitPool();
+
+        exampleUnit = unitPool.obtain(unitFactory, UnitFactory.UnitType.INFANTRY);
+
+
         Gdx.input.setInputProcessor(inputMultiplexer);
     }
 
@@ -56,6 +70,9 @@ public class Main extends ApplicationAdapter {
         camera.update();
         batch.setProjectionMatrix(camera.combined);
         gameMap.update();
+
+        //update unit (logic only belum render)
+        exampleUnit.update(Gdx.graphics.getDeltaTime());
 
         ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
         batch.begin();
@@ -80,5 +97,7 @@ public class Main extends ApplicationAdapter {
     public void dispose() {
         batch.dispose();
         gameMap.dispose();
+
+        unitPool.free(exampleUnit);
     }
 }

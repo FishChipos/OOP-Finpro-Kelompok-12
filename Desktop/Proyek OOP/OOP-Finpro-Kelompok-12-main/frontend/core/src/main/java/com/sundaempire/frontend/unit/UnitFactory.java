@@ -1,8 +1,24 @@
 package com.sundaempire.frontend.unit;
 
-import com.badlogic.gdx.math.Vector2;
-import com.sundaempire.frontend.unit.Unit;
+public class UnitFactory {
 
-public interface UnitFactory {
-    Unit create(Vector2 position);
+    public enum UnitType {
+        INFANTRY,
+        ARCHER
+    }
+
+    public Unit createUnit(UnitType type) {
+
+        switch (type) {
+            case INFANTRY:
+                return new Unit("Infantry", 100, 10);
+
+            case ARCHER:
+                return new Unit("Archer", 80, 15);
+
+            default:
+                throw new IllegalArgumentException("Unknown unit type");
+        }
+    }
+
 }

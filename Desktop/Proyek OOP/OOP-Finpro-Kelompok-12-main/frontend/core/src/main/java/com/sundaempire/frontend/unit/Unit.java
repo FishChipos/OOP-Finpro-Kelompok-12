@@ -1,28 +1,26 @@
 package com.sundaempire.frontend.unit;
 
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Vector2;
 
-public abstract class Unit {
+public class Unit {
 
-    protected Vector2 position;
-    protected Vector2 size;
+    private String name;
+    private int health;
+    private int attack;
 
-    protected UnitState currentState;
+    private UnitState currentState;
 
-    public Unit(Vector2 position, Vector2 size) {
-        this.position = new Vector2(position);
-        this.size = new Vector2(size);
+    public Unit(String name, int health, int attack) {
+        this.name = name;
+        this.health = health;
+        this.attack = attack;
     }
 
-    public void setState(UnitState newState) {
+    public void changeState(UnitState newState) {
         if (currentState != null) {
             currentState.exit(this);
         }
         currentState = newState;
-        if (currentState != null) {
-            currentState.enter(this);
-        }
+        currentState.enter(this);
     }
 
     public void update(float delta) {
@@ -31,21 +29,12 @@ public abstract class Unit {
         }
     }
 
-    public abstract void render(SpriteBatch batch);
+    public String getName() { return name; }
+    public int getHealth() { return health; }
+    public int getAttack() { return attack; }
 
-    public void dispose() {
-
-    }
-
-    public Vector2 getPosition() {
-        return position;
-    }
-
-    public void setPosition(Vector2 position) {
-        this.position.set(position);
-    }
-
-    public Vector2 getSize() {
-        return size;
+    public void damage(int amount) {
+        health -= amount;
     }
 }
+
