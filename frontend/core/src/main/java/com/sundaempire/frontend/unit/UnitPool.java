@@ -6,11 +6,11 @@ public class UnitPool {
 
     private final Stack<Unit> pool = new Stack<>();
 
-    public Unit obtain(UnitFactory factory, UnitFactory.UnitType type) {
+    public Unit obtain(UnitFactory factory, UnitFactory.UnitType type, Unit.Owner owner) {
         if (!pool.isEmpty()) {
             return pool.pop();
         }
-        return factory.createUnit(type);
+        return factory.createUnit(type, owner);
     }
 
     public void free(Unit unit) {
