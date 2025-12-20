@@ -1,18 +1,22 @@
 package com.sundaempire.backend.save;
 
 import com.sundaempire.backend.ErrorResponseCompatible;
+import com.sundaempire.backend.player.PlayerRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class SaveService implements ErrorResponseCompatible {
+    private final PlayerRepository playerRepository;
     private final SaveRepository saveRepository;
 
-    public SaveService(SaveRepository saveRepository) {
+    public SaveService(PlayerRepository playerRepository, SaveRepository saveRepository) {
+        this.playerRepository = playerRepository;
         this.saveRepository = saveRepository;
     }
 
@@ -31,22 +35,21 @@ public class SaveService implements ErrorResponseCompatible {
     }
 
     public List<Save> findSavesByPlayerId(Long playerId) {
-        List<Save> saves = saveRepository.findSavesByPlayerId(playerId);
-
-        if (saves.isEmpty()) {
+        if (!playerRepository.existsById(playerId)) {
             throw createErrorResponse(HttpStatus.NOT_FOUND, "Player ID not found!");
         }
 
-        return saves;
+        return saveRepository.findSavesByPlayerId(playerId);
     }
 
+    @Transactional
     public Save createSave(Save save) {
         if (save == null) {
             throw createErrorResponse(HttpStatus.BAD_REQUEST, "Save is null!");
         }
 
-        if (saveRepository.existsById(save.getId())) {
-            throw createErrorResponse(HttpStatus.CONFLICT, "ID already exists!");
+        if (!playerRepository.existsById(save.getPlayerId())) {
+            throw createErrorResponse(HttpStatus.NOT_FOUND, "Player ID not found!");
         }
 
         return saveRepository.save(save);
