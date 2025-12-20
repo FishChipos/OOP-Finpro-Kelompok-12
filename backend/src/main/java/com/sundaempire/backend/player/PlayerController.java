@@ -1,19 +1,17 @@
 package com.sundaempire.backend.player;
 
-import com.sundaempire.backend.BackendErrorCompatible;
-import org.apache.coyote.Response;
+import com.sundaempire.backend.ErrorResponseCompatible;
 import org.jspecify.annotations.NonNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
+import org.springframework.web.ErrorResponseException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("api/players")
-public class PlayerController implements BackendErrorCompatible {
+public class PlayerController implements ErrorResponseCompatible {
     private final PlayerService playerService;
 
     public PlayerController(PlayerService playerService) {
@@ -21,31 +19,39 @@ public class PlayerController implements BackendErrorCompatible {
     }
 
     @GetMapping
-    public ResponseEntity<@NonNull List<Player>> getPlayers() {
+    public ResponseEntity<?> get(@RequestParam(required = false) String username) {
+        if (username == null) {
+            return getPlayers();
+        }
+        else {
+            return getPlayerByUsername(username);
+        }
+    }
+
+    private ResponseEntity<@NonNull List<Player>> getPlayers() {
         List<Player> players = playerService.findPlayers();
 
         return ResponseEntity.status(HttpStatus.OK).body(players);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<?> getPlayerById(@PathVariable UUID id) {
-        try {
-            Player player = playerService.findPlayerById(id);
-            return ResponseEntity.status(HttpStatus.OK).body(player);
-        }
-        catch (RuntimeException e) {
-            return parseError(e);
-        }
-    }
-
-    @GetMapping("username/{username}")
-    public ResponseEntity<?> getPlayerByUsername(@PathVariable String username) {
+    private ResponseEntity<?> getPlayerByUsername(String username) {
         try {
             Player player = playerService.findPlayerByUsername(username);
             return ResponseEntity.status(HttpStatus.OK).body(player);
         }
-        catch (RuntimeException e) {
-            return parseError(e);
+        catch (ErrorResponseException e) {
+            return parseErrorResponse(e);
+        }
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getPlayerById(@PathVariable Long id) {
+        try {
+            Player player = playerService.findPlayerById(id);
+            return ResponseEntity.status(HttpStatus.OK).body(player);
+        }
+        catch (ErrorResponseException e) {
+            return parseErrorResponse(e);
         }
     }
 
@@ -55,31 +61,30 @@ public class PlayerController implements BackendErrorCompatible {
             Player createdPlayer = playerService.createPlayer(player);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdPlayer);
         }
-        catch (RuntimeException e) {
-            return parseError(e);
+        catch (ErrorResponseException e) {
+            return parseErrorResponse(e);
         }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> putPlayerById(@PathVariable UUID id, @RequestBody Player player) {
+    public ResponseEntity<?> putPlayerById(@PathVariable Long id, @RequestBody Player player) {
         try {
             Player updatedPlayer = playerService.updatePlayerById(id, player);
-            return ResponseEntity.status(HttpStatus.OK).body(updatedPlayer);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(updatedPlayer);
         }
-        catch (RuntimeException e) {
-            return parseError(e);
+        catch (ErrorResponseException e) {
+            return parseErrorResponse(e);
         }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deletePlayerById(@PathVariable UUID id) {
+    public ResponseEntity<?> deletePlayerById(@PathVariable Long id) {
         try {
             playerService.deletePlayerById(id);
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
-        catch (RuntimeException e) {
-            return parseError(e);
+        catch (ErrorResponseException e) {
+            return parseErrorResponse(e);
         }
     }
-
 }

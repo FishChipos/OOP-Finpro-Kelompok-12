@@ -9,7 +9,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface SaveRepository extends JpaRepository<@NonNull Save, @NonNull UUID> {
+public interface SaveRepository extends JpaRepository<@NonNull Save, @NonNull Long> {
     Optional<Save> findSaveById(Long id);
-    List<Save> findSavesByPlayerId(UUID playerId);
+    List<Save> findSavesByPlayerId(Long playerId);
 }

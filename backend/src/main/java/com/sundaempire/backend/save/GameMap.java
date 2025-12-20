@@ -8,7 +8,7 @@ import java.util.List;
 @Table(name = "gamemaps")
 public class GameMap {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     @Column(name = "id")
     private Long id;
 

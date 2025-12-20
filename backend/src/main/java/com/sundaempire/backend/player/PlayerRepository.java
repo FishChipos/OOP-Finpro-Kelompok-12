@@ -8,8 +8,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface PlayerRepository extends JpaRepository<@NonNull Player, @NonNull UUID> {
-    Optional<Player> findPlayerById(UUID id);
+public interface PlayerRepository extends JpaRepository<@NonNull Player, @NonNull Long> {
+    Optional<Player> findPlayerById(Long id);
     Optional<Player> findPlayerByUsername(String username);
 
     boolean existsByUsername(String username);
