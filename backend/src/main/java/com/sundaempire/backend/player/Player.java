@@ -3,9 +3,11 @@ package com.sundaempire.backend.player;
 
 import com.sundaempire.backend.save.Save;
 import jakarta.persistence.*;
+import jakarta.transaction.Transactional;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -23,8 +25,8 @@ public class Player {
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "player", fetch = FetchType.LAZY)
-    private List<Save> saves;
+    @OneToMany(mappedBy = "player", fetch = FetchType.EAGER)
+    private List<Save> saves = new ArrayList<>();
 
     public Player() {}
 
@@ -48,6 +50,14 @@ public class Player {
         this.username = username;
     }
 
+    public List<Save> getSaves() {
+        return saves;
+    }
+
+    public void setSaves(List<Save> saves) {
+        this.saves = saves;
+    }
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -55,4 +65,6 @@ public class Player {
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
+
+
 }
