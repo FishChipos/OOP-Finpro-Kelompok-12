@@ -6,26 +6,19 @@ import com.sundaempire.frontend.Observable;
 import com.sundaempire.frontend.unit.Unit;
 import com.sundaempire.frontend.unit.states.UnitStateIdle;
 import com.sundaempire.frontend.unit.states.UnitStateMoving;
+import com.sundaempire.frontend.player.PlayerManager;
 
-import java.util.*;
+import java.util.List;
 
-import static com.sundaempire.frontend.gamemanager.GameActor.PLAYER_1;
+public class RoundManager {
+    private int round = 0;
+    private GameActor currentGameActor = GameActor.PLAYER_1;
+    private int gameActorUnitIndex = 0;
 
-public class RoundManager implements Observable {
-    private int round = 1;
-    private GameActor currentGameActor = PLAYER_1;
-    private Map<GameActor, List<Unit>> gameActorUnits = new HashMap<>();
-    private int currentUnitIndex = -1;
-    private Unit currentUnit;
-    private List<Unit> toBeAdded = new ArrayList<>();
-    private List<Unit> toBeRemoved = new ArrayList<>();
+    private final List<PlayerManager> players;
 
-    private List<Notifiable> roundChangeObservers = new ArrayList<>();
-
-    public RoundManager() {
-        for (GameActor gameActor : GameActor.values()) {
-            gameActorUnits.put(gameActor, new ArrayList<>());
-        }
+    public RoundManager(List<PlayerManager> players) {
+        this.players = players;
     }
 
     public void nextRound() {
@@ -50,57 +43,35 @@ public class RoundManager implements Observable {
     }
 
     public void nextUnit() {
-        if (currentUnit != null) {
-            currentUnit.changeUnitState(new UnitStateIdle(currentUnit));
-        }
+        PlayerManager activePlayer = getCurrentPlayer();
+        List<Unit> units = activePlayer.getUnits();
+        if (units.isEmpty()) return;
 
-        ++currentUnitIndex;
+        Unit unit = units.get(gameActorUnitIndex);
+        unit.changeUnitState(new UnitStateIdle(unit));
+        ++gameActorUnitIndex;
 
-        if (currentUnitIndex >= gameActorUnits.get(currentGameActor).size()) {
+        if (gameActorUnitIndex >= units.size()) {
             nextTurn();
         }
 
-        currentUnit = gameActorUnits.get(currentGameActor).get(currentUnitIndex);
-        currentUnit.changeUnitState(new UnitStateMoving(currentUnit));
+        unit = units.get(gameActorUnitIndex % units.size()); // safety
+        unit.changeUnitState(new UnitStateMoving(unit));
     }
 
-    @Override
-    public void addObserver(Notifiable observer) {
-        roundChangeObservers.add(observer);
-    }
-
-    @Override
-    public void removeObserver(Notifiable observer) {
-        roundChangeObservers.remove(observer);
-    }
-
-    public void updateUnitList() {
-        for (Unit unit : toBeRemoved) {
-            gameActorUnits.get(unit.getOwner()).remove(unit);
+    public PlayerManager getCurrentPlayer() {
+        for (PlayerManager pm : players) {
+            if (pm.getActor() == currentGameActor) return pm;
         }
-
-        toBeRemoved.clear();
-
-        for (Unit unit : toBeAdded) {
-            gameActorUnits.get(unit.getOwner()).add(unit);
-        }
-
-        toBeAdded.clear();
-    }
-
-    public void addUnit(Unit unit) {
-        toBeAdded.add(unit);
-    }
-
-    public void removeUnit(Unit unit) {
-        toBeRemoved.add(unit);
+        return null;
     }
 
     public Unit getActiveUnit() {
-        return currentUnit;
-    }
-
-    public int getRound() {
-        return round;
+        PlayerManager activePlayer = getCurrentPlayer();
+        try {
+            return activePlayer.getUnits().get(gameActorUnitIndex);
+        } catch (IndexOutOfBoundsException e) {
+            return null;
+        }
     }
 }

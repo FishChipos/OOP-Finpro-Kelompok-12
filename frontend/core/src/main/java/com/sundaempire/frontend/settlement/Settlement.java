@@ -1,30 +1,36 @@
 package com.sundaempire.frontend.settlement;
 
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
-import com.sundaempire.frontend.gamemanager.GameManager;
-import com.sundaempire.frontend.gamemap.GameMap;
-
+import com.sundaempire.frontend.faction.Faction;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Settlement {
-    private GameMap gameMap;
-    private Vector2 coordinates = new Vector2();
-    private Rectangle collider = new Rectangle();
-
+    private Faction owner;
     private int food;
     private int defense;
 
     private final List<Building> buildings = new ArrayList<>();
 
-    private Texture texture;
+    public Settlement(Faction owner) {
+        this.owner = owner;
+    }
+
+    public boolean capture(Faction attacker, int attackPower) {
+        if (attackPower > defense) {
+            owner = attacker;
+            defense = Math.max(0, defense / 2);
+            return true;
+        }
+        return false;
+    }
 
     public void addBuilding(Building building) {
         buildings.add(building);
         building.applyEffect(this);
+    }
+
+    public Faction getOwner() {
+        return owner;
     }
 
     public void addFood(int amount) {
