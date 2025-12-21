@@ -27,6 +27,8 @@ public enum GameManager {
         assetManager.load("textures/units/swordsman_outline.png", Texture.class);
         assetManager.load("textures/units/archer_outline.png", Texture.class);
 
+        assetManager.load("textures/settlements/settlement.png", Texture.class);
+
         assetManager.load("textures/buildings/farm.png", Texture.class);
         assetManager.load("textures/buildings/guard_tower.png", Texture.class);
     }

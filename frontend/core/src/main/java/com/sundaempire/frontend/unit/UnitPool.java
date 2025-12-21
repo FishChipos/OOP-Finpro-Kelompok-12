@@ -19,13 +19,8 @@ public enum UnitPool {
 
     private int unitCount = 0;
 
-    private UnitFactory unitFactory;
     private GameMap gameMap;
     private InputMultiplexer inputMultiplexer;
-
-    public void setUnitFactory(UnitFactory unitFactory) {
-        this.unitFactory = unitFactory;
-    }
 
     public void setGameMap(GameMap gameMap) {
         this.gameMap = gameMap;
@@ -35,11 +30,11 @@ public enum UnitPool {
         this.inputMultiplexer = inputMultiplexer;
     }
 
-    public Unit obtain(Vector2 position, UnitType unitType, GameActor owner) {
+    public Unit obtain(Vector2 coordinates, UnitType unitType, GameActor owner) {
         Unit unit;
 
         if (unitCount < POOL_CAPACITY) {
-            unit = unitFactory.createUnit();
+            unit = UnitFactory.createUnit();
             ++unitCount;
         }
         else if (!inactiveUnits.isEmpty()) {
@@ -49,7 +44,7 @@ public enum UnitPool {
             return null;
         }
 
-        unitFactory.configureUnit(position, unit, unitType, owner, gameMap, inputMultiplexer);
+        UnitFactory.configureUnit(coordinates, unit, unitType, owner, gameMap, inputMultiplexer);
         GameManager.INSTANCE.getRoundManager().addUnit(unit);
 
         activeUnits.add(unit);
@@ -70,7 +65,11 @@ public enum UnitPool {
 
     public void releaseAll() {
         for (Unit unit : getActiveUnits()) {
-            release(unit);
+            unit.dispose();
+            inactiveUnits.add(unit);
+            GameManager.INSTANCE.getRoundManager().removeUnit(unit);
         }
+
+        activeUnits.clear();
     }
 }

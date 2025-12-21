@@ -9,17 +9,21 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.sundaempire.frontend.Notifiable;
 import com.sundaempire.frontend.gamemanager.GameManager;
 import com.sundaempire.frontend.gamemap.GameMap;
+import com.sundaempire.frontend.settlement.Settlement;
 import com.sundaempire.frontend.ui.states.UIStateGame;
 import com.sundaempire.frontend.ui.states.UIStateMainMenu;
 import com.sundaempire.frontend.ui.states.UIState;
 import com.sundaempire.frontend.unit.Unit;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class UI implements Notifiable {
+public enum UI implements Notifiable {
+    INSTANCE;
 
     private UIState currentState;
 
@@ -27,18 +31,20 @@ public class UI implements Notifiable {
     private final Table table = new Table();
     private final Skin skin = new Skin();
 
-    private final OrthographicCamera camera;
-    private final InputMultiplexer multiplexer;
-    private final GameMap gameMap;
-    private final List<Unit> units;
+    private OrthographicCamera camera;
+    private InputMultiplexer multiplexer;
+    private GameMap gameMap;
+    private List<Unit> units;
+    private List<Settlement> settlements = new ArrayList<>();
 
-    public UI(OrthographicCamera camera, InputMultiplexer multiplexer, GameMap gameMap, List<Unit> units) {
+    public void initialize(OrthographicCamera camera, InputMultiplexer multiplexer, GameMap gameMap, List<Unit> units) {
         this.camera = camera;
         this.multiplexer = multiplexer;
         this.gameMap = gameMap;
         this.units = units;
 
         GameManager.INSTANCE.getRoundManager().addObserver(this);
+        gameMap.addObserver(this);
 
         table.setFillParent(true);
         stage.addActor(table);
@@ -54,6 +60,9 @@ public class UI implements Notifiable {
 
         Label.LabelStyle labelStyle = new Label.LabelStyle(skin.getFont("default"), Color.WHITE);
         skin.add("default", labelStyle);
+
+        TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle(null, null, null, skin.getFont("default"));
+        skin.add("default", textButtonStyle);
     }
 
     public void setState(UIState newState) {
@@ -90,6 +99,10 @@ public class UI implements Notifiable {
         stage.draw();
     }
 
+    public void dispose() {
+
+    }
+
     @Override
     public void notice() {
         currentState.notice();
@@ -117,6 +130,10 @@ public class UI implements Notifiable {
 
     public Skin getSkin() {
         return skin;
+    }
+
+    public List<Settlement> getSettlements() {
+        return settlements;
     }
 }
 

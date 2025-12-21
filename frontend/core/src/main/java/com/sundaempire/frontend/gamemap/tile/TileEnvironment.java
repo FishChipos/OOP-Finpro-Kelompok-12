@@ -10,6 +10,8 @@ abstract public class TileEnvironment {
 
     private Texture texture;
 
+    private String name;
+
     public void setPosition(Vector2 position) {
         collider.setPosition(position);
     }
@@ -28,5 +30,13 @@ abstract public class TileEnvironment {
 
     public void dispose() {
         texture.dispose();
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

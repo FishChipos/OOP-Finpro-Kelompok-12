@@ -34,13 +34,10 @@ public class Main extends ApplicationAdapter {
     private SpriteBatch batch;
     private InputMultiplexer inputMultiplexer;
 
-    private UI ui;
-
     private TileFactory tileFactory;
     private GameMap gameMap;
 
     private UnitFactory unitFactory;
-    private UnitPool unitPool;
 
     private float screenWidth, screenHeight;
 
@@ -65,15 +62,14 @@ public class Main extends ApplicationAdapter {
         gameMap.registerInputProcessor(inputMultiplexer);
 
         //Unit system
-        unitFactory = new UnitFactory();
-        UnitPool.INSTANCE.setUnitFactory(unitFactory);
         UnitPool.INSTANCE.setGameMap(gameMap);
         UnitPool.INSTANCE.setInputMultiplexer(inputMultiplexer);
         UnitPool.INSTANCE.obtain(new Vector2(0f, 0f), UnitType.EXPLORER, GameActor.PLAYER_1);
-        UnitPool.INSTANCE.obtain(new Vector2(0f, 0f), UnitType.SWORDSMAN, GameActor.PLAYER_1);
+        UnitPool.INSTANCE.obtain(new Vector2(0f, 1f), UnitType.SWORDSMAN, GameActor.PLAYER_1);
+        UnitPool.INSTANCE.obtain(new Vector2(1f, 0f), UnitType.ARCHER, GameActor.PLAYER_1);
         GameManager.INSTANCE.getRoundManager().nextUnit();
 
-        ui = new UI(camera, inputMultiplexer, gameMap, UnitPool.INSTANCE.getActiveUnits());
+        UI.INSTANCE.initialize(camera, inputMultiplexer, gameMap, UnitPool.INSTANCE.getActiveUnits());
 
         Gdx.input.setInputProcessor(inputMultiplexer);
     }
@@ -84,10 +80,10 @@ public class Main extends ApplicationAdapter {
 
         camera.update();
         batch.setProjectionMatrix(camera.combined);
-        ui.update(delta);
+        UI.INSTANCE.update(delta);
 
         ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
-        ui.render(batch);
+        UI.INSTANCE.render(batch);
     }
 
     @Override
@@ -108,6 +104,7 @@ public class Main extends ApplicationAdapter {
         batch.dispose();
         gameMap.dispose();
 
-        unitPool.releaseAll();
+        UnitPool.INSTANCE.releaseAll();
+        UI.INSTANCE.dispose();
     }
 }

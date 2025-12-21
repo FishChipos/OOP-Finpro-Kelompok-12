@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.sundaempire.frontend.gamemanager.GameActor;
 import com.sundaempire.frontend.gamemanager.GameManager;
 import com.sundaempire.frontend.gamemap.GameMap;
+import com.sundaempire.frontend.unit.commands.UnitCommand;
 import com.sundaempire.frontend.unit.states.UnitState;
 import com.sundaempire.frontend.unit.states.UnitStateIdle;
 
@@ -136,5 +137,9 @@ public class Unit extends Actor {
 
     public void setCoordinates(Vector2 coordinates) {
         this.coordinates = coordinates;
+    }
+
+    public void setNextCommand(UnitCommand unitCommand) {
+        unitState.setNextCommand(unitCommand);
     }
 }

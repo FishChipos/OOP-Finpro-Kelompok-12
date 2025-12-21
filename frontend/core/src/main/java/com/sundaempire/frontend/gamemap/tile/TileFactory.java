@@ -39,7 +39,7 @@ public class TileFactory {
     public Tile createRandom(float x, float y) {
         float random = noise.generate(x, y);
 
-        if (random <= 0.35f) {
+        if (random <= 0.25f) {
             return create(new Vector2(0f, 0f), new Vector2(0f, 0f), new TileEnvironmentWater(), new ArrayList<>());
         }
         else if (random <= 0.8f) {

@@ -22,11 +22,16 @@ public abstract class UnitCommandMove extends UnitCommand {
     public boolean canMove(Unit unit) {
         Vector2 newCoordinates = new Vector2(unit.getCoordinates());
         newCoordinates.add(coordinateTranslation);
-        Tile targetTile = unit.getGameMap().getTile(newCoordinates);
+        boolean isCoordinateInBounds = unit.getGameMap().isCoordinateInBounds(newCoordinates);
 
-        if (targetTile.getEnvironment() instanceof TileEnvironmentGrass) {
-            return unit.getGameMap().isCoordinateInBounds(newCoordinates);
+        if (isCoordinateInBounds) {
+            Tile targetTile = unit.getGameMap().getTile(newCoordinates);
+            if (targetTile.getEnvironment() instanceof TileEnvironmentGrass) {
+                return unit.getGameMap().isCoordinateInBounds(newCoordinates);
+            }
         }
+
+
 
         return false;
     }
