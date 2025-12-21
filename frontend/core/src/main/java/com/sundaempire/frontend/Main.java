@@ -6,16 +6,22 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.TimeUtils;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.sundaempire.frontend.gamemanager.GameActor;
 import com.sundaempire.frontend.gamemanager.GameManager;
 import com.sundaempire.frontend.gamemap.GameMap;
 import com.sundaempire.frontend.gamemap.tile.TileFactory;
+import com.sundaempire.frontend.ui.UI;
 import com.sundaempire.frontend.unit.Unit;
 import com.sundaempire.frontend.unit.UnitFactory;
 import com.sundaempire.frontend.unit.UnitPool;
 import com.sundaempire.frontend.unit.UnitType;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class Main extends ApplicationAdapter {
@@ -28,13 +34,13 @@ public class Main extends ApplicationAdapter {
     private SpriteBatch batch;
     private InputMultiplexer inputMultiplexer;
 
+    private UI ui;
+
     private TileFactory tileFactory;
     private GameMap gameMap;
 
     private UnitFactory unitFactory;
     private UnitPool unitPool;
-    private Unit explorer;
-    private Unit swordsman;
 
     private float screenWidth, screenHeight;
 
@@ -61,29 +67,37 @@ public class Main extends ApplicationAdapter {
         //Unit system
         unitFactory = new UnitFactory();
         unitPool = new UnitPool(unitFactory, gameMap, inputMultiplexer);
-
-        explorer = unitPool.obtain(new Vector2(0f, 0f), UnitType.EXPLORER, GameActor.PLAYER_1);
-        swordsman = unitPool.obtain(new Vector2(0f, 0f), UnitType.SWORDSMAN, GameActor.PLAYER_1);
+        unitPool.obtain(new Vector2(0f, 0f), UnitType.EXPLORER, GameActor.PLAYER_1);
+        unitPool.obtain(new Vector2(0f, 0f), UnitType.SWORDSMAN, GameActor.PLAYER_1);
         GameManager.INSTANCE.getRoundManager().nextUnit();
+
+        ui = new UI(camera, inputMultiplexer);
 
         Gdx.input.setInputProcessor(inputMultiplexer);
     }
 
     @Override
     public void render() {
+        float delta = Gdx.graphics.getDeltaTime();
+
         camera.update();
         batch.setProjectionMatrix(camera.combined);
-        gameMap.update();
+        ui.update(delta);
+        gameMap.update(delta);
 
         //update unit (logic only belum render)
-        explorer.update(Gdx.graphics.getDeltaTime());
-        swordsman.update(Gdx.graphics.getDeltaTime());
+        for (Unit unit : unitPool.getActiveUnits()) {
+            unit.update(delta);
+        }
 
         ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
         batch.begin();
         gameMap.render(batch);
-        explorer.render(batch);
-        swordsman.render(batch);
+
+        for (Unit unit : unitPool.getActiveUnits()) {
+            unit.render(batch);
+        }
+        ui.render(batch);
         batch.end();
     }
 
@@ -105,6 +119,6 @@ public class Main extends ApplicationAdapter {
         batch.dispose();
         gameMap.dispose();
 
-        unitPool.release(explorer);
+        unitPool.releaseAll();
     }
 }

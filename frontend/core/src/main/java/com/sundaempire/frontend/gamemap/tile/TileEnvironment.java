@@ -1,7 +1,7 @@
 package com.sundaempire.frontend.gamemap.tile;
 
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
@@ -22,7 +22,7 @@ abstract public class TileEnvironment {
         this.texture = texture;
     }
 
-    public void render(SpriteBatch batch) {
+    public void render(Batch batch) {
         batch.draw(texture, collider.x, collider.y, collider.width, collider.height);
     }
 

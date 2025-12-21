@@ -1,7 +1,9 @@
-package com.sundaempire.frontend.unit;
+package com.sundaempire.frontend.unit.states;
 
 import com.badlogic.gdx.InputMultiplexer;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.sundaempire.frontend.unit.Unit;
+import com.sundaempire.frontend.unit.commands.UnitCommand;
 
 public abstract class UnitState {
     protected Unit unit;
@@ -23,7 +25,7 @@ public abstract class UnitState {
 
     };
 
-    public void render(SpriteBatch batch) {
+    public void render(Batch batch) {
         batch.draw(unit.getTexture(), unit.getCollider().getX(), unit.getCollider().getY(), unit.getCollider().getWidth(), unit.getCollider().getHeight());
     }
 

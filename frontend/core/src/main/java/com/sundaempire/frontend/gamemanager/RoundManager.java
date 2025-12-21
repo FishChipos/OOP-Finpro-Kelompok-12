@@ -1,7 +1,6 @@
 package com.sundaempire.frontend.gamemanager;
 
 import com.sundaempire.frontend.unit.Unit;
-import com.sundaempire.frontend.unit.UnitState;
 import com.sundaempire.frontend.unit.states.UnitStateIdle;
 import com.sundaempire.frontend.unit.states.UnitStateMoving;
 

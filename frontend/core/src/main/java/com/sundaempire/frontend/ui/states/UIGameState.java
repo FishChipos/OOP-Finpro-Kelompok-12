@@ -4,19 +4,21 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
 import com.sundaempire.frontend.gamemanager.GameManager;
+import com.sundaempire.frontend.ui.UI;
 import com.sundaempire.frontend.ui.UIState;
 import com.sundaempire.frontend.unit.Unit;
 import com.sundaempire.frontend.unit.commands.UnitCommandMoveRight;
 
-public class UIGameState implements UIState {
+public class UIGameState extends UIState {
 
+    private UI ui;
     private InputAdapter inputProcessor;
-    private final OrthographicCamera camera;
 
-    public UIGameState(OrthographicCamera camera) {
-        this.camera = camera;
+    public UIGameState(UI ui) {
+        this.ui = ui;
     }
 
     @Override
@@ -33,7 +35,7 @@ public class UIGameState implements UIState {
     }
 
     @Override
-    public void render() {
+    public void render(SpriteBatch batch) {
     }
 
     @Override
@@ -44,7 +46,7 @@ public class UIGameState implements UIState {
                 Unit unit = GameManager.INSTANCE.getRoundManager().getActiveUnit();
 
                 if (button == Input.Buttons.RIGHT && unit != null) {
-                    Vector3 worldPos = camera.unproject(new Vector3(screenX, screenY, 0));
+                    Vector3 worldPos = ui.getCamera().unproject(new Vector3(screenX, screenY, 0));
                     unit.getUnitState().setNextCommand(new UnitCommandMoveRight());
                     return true;
                 }

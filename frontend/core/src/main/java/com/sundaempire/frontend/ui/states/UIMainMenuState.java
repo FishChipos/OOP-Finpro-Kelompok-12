@@ -3,18 +3,17 @@ package com.sundaempire.frontend.ui.states;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.sundaempire.frontend.ui.UI;
 import com.sundaempire.frontend.ui.UIState;
 
-public class UIMainMenuState implements UIState {
+public class UIMainMenuState extends UIState {
 
     private final UI ui;
-    private final UIState gameState;
     private InputAdapter inputProcessor;
 
-    public UIMainMenuState(UI ui, UIState gameState) {
+    public UIMainMenuState(UI ui) {
         this.ui = ui;
-        this.gameState = gameState;
     }
 
     @Override
@@ -30,7 +29,7 @@ public class UIMainMenuState implements UIState {
     }
 
     @Override
-    public void render() {
+    public void render(SpriteBatch batch) {
     }
 
     @Override
@@ -39,7 +38,7 @@ public class UIMainMenuState implements UIState {
             @Override
             public boolean keyDown(int keycode) {
                 if (keycode == Input.Keys.ENTER) {
-                    ui.setState(gameState);
+                    ui.setState(new UIGameState(ui));
                     return true;
                 }
                 if (keycode == Input.Keys.ESCAPE) {

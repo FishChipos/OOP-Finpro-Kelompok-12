@@ -2,9 +2,8 @@ package com.sundaempire.frontend.unit.commands;
 
 import com.badlogic.gdx.math.Vector2;
 import com.sundaempire.frontend.unit.Unit;
-import com.sundaempire.frontend.unit.UnitCommand;
 
-public abstract class UnitCommandMove implements UnitCommand {
+public abstract class UnitCommandMove extends UnitCommand {
     protected Vector2 coordinateTranslation = new Vector2();
 
     @Override

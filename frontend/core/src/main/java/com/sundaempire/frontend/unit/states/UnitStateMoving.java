@@ -4,10 +4,13 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.math.Rectangle;
 import com.sundaempire.frontend.gamemanager.GameManager;
 import com.sundaempire.frontend.unit.Unit;
-import com.sundaempire.frontend.unit.UnitCommand;
-import com.sundaempire.frontend.unit.UnitState;
+import com.sundaempire.frontend.unit.commands.UnitCommand;
 import com.sundaempire.frontend.unit.commands.UnitCommandMoveDown;
 import com.sundaempire.frontend.unit.commands.UnitCommandMoveLeft;
 import com.sundaempire.frontend.unit.commands.UnitCommandMoveRight;
@@ -57,6 +60,32 @@ public class UnitStateMoving extends UnitState {
 
             nextCommand = null;
         }
+    }
+
+    @Override
+    public void render(Batch batch) {
+        super.render(batch);
+        drawActiveOutline(batch);
+    }
+
+    private void drawActiveOutline(Batch batch) {
+        Texture texture = unit.getTexture();
+        if (!texture.getTextureData().isPrepared()) {
+            texture.getTextureData().prepare();
+        }
+        Pixmap pixmap = texture.getTextureData().consumePixmap();
+
+        Pixmap scaledPixmap = new Pixmap(pixmap.getWidth() + 4, pixmap.getHeight()  + 4, Pixmap.Format.RGBA8888);
+        scaledPixmap.setColor(0.98f, 0.82f, 0.02f, 1f);
+        scaledPixmap.drawPixmap(pixmap, 0, 0, pixmap.getWidth(), pixmap.getHeight(), 0, 0, scaledPixmap.getWidth(), scaledPixmap.getHeight());
+        pixmap.dispose();
+
+        Texture scaledTexture = new Texture(scaledPixmap);
+        scaledPixmap.dispose();
+
+        Rectangle collider = unit.getCollider();
+
+        batch.draw(scaledTexture, collider.x - 2f, collider.y - 2f, collider.width + 4f, collider.height + 4f);
     }
 
     @Override

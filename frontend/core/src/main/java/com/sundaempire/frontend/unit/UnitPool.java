@@ -12,7 +12,8 @@ import java.util.List;
 
 public class UnitPool {
     private static final int POOL_CAPACITY = 50;
-    private List<Unit> units = new ArrayList<>(POOL_CAPACITY);
+    private List<Unit> inactiveUnits = new ArrayList<>(POOL_CAPACITY);
+    private List<Unit> activeUnits = new ArrayList<>(POOL_CAPACITY);
 
     private int unitCount = 0;
 
@@ -33,8 +34,8 @@ public class UnitPool {
             unit = unitFactory.createUnit();
             ++unitCount;
         }
-        else if (!units.isEmpty()) {
-            unit = units.remove(units.size() - 1);
+        else if (!inactiveUnits.isEmpty()) {
+            unit = inactiveUnits.remove(inactiveUnits.size() - 1);
         }
         else {
             return null;
@@ -43,11 +44,24 @@ public class UnitPool {
         unitFactory.configureUnit(position, unit, unitType, owner, gameMap, inputMultiplexer);
         GameManager.INSTANCE.getRoundManager().addUnit(unit);
 
+        activeUnits.add(unit);
+
         return unit;
     }
 
     public void release(Unit unit) {
-        units.add(unit);
+        inactiveUnits.add(unit);
+        activeUnits.remove(unit);
         GameManager.INSTANCE.getRoundManager().removeUnit(unit);
+    }
+
+    public List<Unit> getActiveUnits() {
+        return activeUnits;
+    }
+
+    public void releaseAll() {
+        for (Unit unit : getActiveUnits()) {
+            release(unit);
+        }
     }
 }
