@@ -27,6 +27,5 @@ abstract public class TileProp {
     }
 
     public void dispose() {
-        texture.dispose();
     }
 }

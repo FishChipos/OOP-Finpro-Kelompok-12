@@ -44,6 +44,7 @@ public enum UI implements Notifiable {
         this.units = units;
 
         GameManager.INSTANCE.getRoundManager().addObserver(this);
+        GameManager.INSTANCE.getPlayerManager().addObserver(this);
         gameMap.addObserver(this);
 
         table.setFillParent(true);

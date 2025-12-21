@@ -25,11 +25,12 @@ abstract public class TileEnvironment {
     }
 
     public void render(Batch batch) {
-        batch.draw(texture, collider.x, collider.y, collider.width, collider.height);
+        if (texture != null) {
+            batch.draw(texture, collider.x, collider.y, collider.width, collider.height);
+        }
     }
 
     public void dispose() {
-        texture.dispose();
     }
 
     public String getName() {
