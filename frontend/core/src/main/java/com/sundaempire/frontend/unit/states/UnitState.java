@@ -26,7 +26,7 @@ public abstract class UnitState {
     };
 
     public void render(Batch batch) {
-        batch.draw(unit.getTexture(), unit.getCollider().getX(), unit.getCollider().getY(), unit.getCollider().getWidth(), unit.getCollider().getHeight());
+        batch.draw(unit.getUnitAssets().getTexture(), unit.getCollider().getX(), unit.getCollider().getY(), unit.getCollider().getWidth(), unit.getCollider().getHeight());
     }
 
     public void exit() {

@@ -1,5 +1,8 @@
 package com.sundaempire.frontend.gamemanager;
 
+import com.badlogic.gdx.Game;
+import com.sundaempire.frontend.Notifiable;
+import com.sundaempire.frontend.Observable;
 import com.sundaempire.frontend.unit.Unit;
 import com.sundaempire.frontend.unit.states.UnitStateIdle;
 import com.sundaempire.frontend.unit.states.UnitStateMoving;
@@ -20,13 +23,18 @@ public class RoundManager {
 
     public void nextRound() {
         ++round;
-        currentGameActor = GameActor.PLAYER_1;
+        currentGameActor = PLAYER_1;
+
+        for (Notifiable observer : roundChangeObservers) {
+            observer.notice();
+        }
     }
 
     public void nextTurn() {
-        gameActorUnitIndex = 0;
+        updateUnitList();
+        currentUnitIndex = 0;
 
-        if (currentGameActor == GameActor.PLAYER_1) {
+        if (currentGameActor == PLAYER_1) {
             nextRound();
             return;
         }

@@ -11,28 +11,31 @@ import com.sundaempire.frontend.player.PlayerManager;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UnitPool {
+public enum UnitPool {
+    INSTANCE;
+
     private static final int POOL_CAPACITY = 50;
     private List<Unit> inactiveUnits = new ArrayList<>(POOL_CAPACITY);
     private List<Unit> activeUnits = new ArrayList<>(POOL_CAPACITY);
 
     private int unitCount = 0;
 
-    private UnitFactory unitFactory;
     private GameMap gameMap;
     private InputMultiplexer inputMultiplexer;
 
-    public UnitPool(UnitFactory unitFactory, GameMap gameMap, InputMultiplexer inputMultiplexer) {
-        this.unitFactory = unitFactory;
+    public void setGameMap(GameMap gameMap) {
         this.gameMap = gameMap;
+    }
+
+    public void setInputMultiplexer(InputMultiplexer inputMultiplexer) {
         this.inputMultiplexer = inputMultiplexer;
     }
 
-    public Unit obtain(Vector2 position, UnitType unitType, GameActor owner) {
+    public Unit obtain(Vector2 coordinates, UnitType unitType, GameActor owner) {
         Unit unit;
 
         if (unitCount < POOL_CAPACITY) {
-            unit = unitFactory.createUnit();
+            unit = UnitFactory.createUnit();
             ++unitCount;
         }
         else if (!inactiveUnits.isEmpty()) {
@@ -56,6 +59,7 @@ public class UnitPool {
     }
 
     public void release(Unit unit) {
+        unit.dispose();
         inactiveUnits.add(unit);
         activeUnits.remove(unit);
         PlayerManager player = GameManager.INSTANCE.getPlayerManagers()
@@ -75,5 +79,7 @@ public class UnitPool {
         for (Unit unit : copy) {
             release(unit);
         }
+
+        activeUnits.clear();
     }
 }

@@ -3,25 +3,37 @@ package com.sundaempire.frontend.ui.states;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputMultiplexer;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.sundaempire.frontend.ui.UI;
-import com.sundaempire.frontend.ui.UIState;
 
-public class UIMainMenuState extends UIState {
+public class UIStateMainMenu extends UIState {
 
-    private final UI ui;
     private InputAdapter inputProcessor;
 
-    public UIMainMenuState(UI ui) {
+    public UIStateMainMenu(UI ui) {
         this.ui = ui;
     }
 
     @Override
     public void onEnter() {
-    }
+        Table table = ui.getTable();
+        Skin skin = ui.getSkin();
 
-    @Override
-    public void onExit() {
+        Label title = new Label("SUNDA EMPIRE", skin);
+        title.setFontScale(3f);
+        Label startPrompt = new Label("Press ENTER to start", skin);
+        Label exitPrompt = new Label("and ESC to exit", skin);
+
+        table.defaults().left().expandX().padLeft(20f).space(10f);
+        table.row();
+        table.add(title);
+        table.row();
+        table.add(startPrompt);
+        table.row();
+        table.add(exitPrompt);
     }
 
     @Override
@@ -29,7 +41,8 @@ public class UIMainMenuState extends UIState {
     }
 
     @Override
-    public void render(SpriteBatch batch) {
+    public void render(Batch batch) {
+
     }
 
     @Override
@@ -38,7 +51,7 @@ public class UIMainMenuState extends UIState {
             @Override
             public boolean keyDown(int keycode) {
                 if (keycode == Input.Keys.ENTER) {
-                    ui.setState(new UIGameState(ui));
+                    ui.setState(new UIStateGame(ui));
                     return true;
                 }
                 if (keycode == Input.Keys.ESCAPE) {

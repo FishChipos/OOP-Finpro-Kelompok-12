@@ -41,15 +41,44 @@ public class Settlement {
         defense += amount;
     }
 
-    public int getFood() {
-        return food;
-    }
-
-    public int getDefense() {
-        return defense;
-    }
-
     public List<Building> getBuildings() {
         return buildings;
+    }
+
+    public void setCoordinates(Vector2 coordinates) {
+        this.coordinates.set(coordinates);
+    }
+
+    public void configure() {
+        collider.setSize(gameMap.getTileDimensions().x, gameMap.getTileDimensions().y);
+        texture = GameManager.INSTANCE.getAssetManager().get("textures/settlements/settlement.png");
+    }
+
+    public void update(float delta) {
+        collider.setPosition(gameMap.getPositionFromCoordinates(coordinates));
+    }
+
+    public void render(Batch batch) {
+        batch.draw(texture, collider.x, collider.y, collider.width, collider.height);
+    }
+
+    public GameMap getGameMap() {
+        return gameMap;
+    }
+
+    public void setGameMap(GameMap gameMap) {
+        this.gameMap = gameMap;
+    }
+
+    public Vector2 getCoordinates() {
+        return coordinates;
+    }
+
+    public void setFood(int food) {
+        this.food = food;
+    }
+
+    public void setDefense(int defense) {
+        this.defense = defense;
     }
 }
