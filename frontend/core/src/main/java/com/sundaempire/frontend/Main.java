@@ -67,6 +67,7 @@ public class Main extends ApplicationAdapter {
         UnitPool.INSTANCE.obtain(new Vector2(0f, 0f), UnitType.EXPLORER, GameActor.PLAYER_1);
         UnitPool.INSTANCE.obtain(new Vector2(0f, 1f), UnitType.SWORDSMAN, GameActor.PLAYER_1);
         UnitPool.INSTANCE.obtain(new Vector2(1f, 0f), UnitType.ARCHER, GameActor.PLAYER_1);
+        GameManager.INSTANCE.getRoundManager().nextUnit();
 
         UI.INSTANCE.initialize(camera, inputMultiplexer, gameMap, UnitPool.INSTANCE.getActiveUnits());
 
