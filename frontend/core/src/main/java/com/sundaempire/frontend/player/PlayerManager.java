@@ -1,53 +1,20 @@
 package com.sundaempire.frontend.player;
 
 import com.sundaempire.frontend.gamemanager.GameActor;
-import com.sundaempire.frontend.unit.Unit;
-import com.sundaempire.frontend.settlement.Settlement;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class PlayerManager {
+    private Map<GameActor, Player> players = new HashMap<>();
 
-    private final GameActor actor;
-
-    private int gold = 100;
-    private int food = 50;
-
-    private final List<Unit> units = new ArrayList<>();
-    private final List<Settlement> settlements = new ArrayList<>();
-
-    public PlayerManager(GameActor actor) {
-        this.actor = actor;
+    public PlayerManager() {
+        players.put(GameActor.PLAYER_1, new Player(GameActor.PLAYER_1));
     }
 
-    public boolean canBuildSettlement(int cost) {
-        return gold >= cost;
+    public Player getPlayer(GameActor gameActor) {
+        return players.get(gameActor);
     }
-
-    public void spendGold(int amount) {
-        gold -= amount;
-    }
-
-    public void addGold(int amount) {
-        gold += amount;
-    }
-
-    public int getGold() {
-        return gold;
-    }
-
-    public void addFood(int amount) { food += amount; }
-    public int getFood() { return food; }
-
-    // Units
-    public void addUnit(Unit unit) { units.add(unit); }
-    public void removeUnit(Unit unit) { units.remove(unit); }
-    public List<Unit> getUnits() { return units; }
-
-    // Settlements
-    public void addSettlement(Settlement settlement) { settlements.add(settlement); }
-    public List<Settlement> getSettlements() { return settlements; }
-
-    public GameActor getActor() { return actor; }
 }

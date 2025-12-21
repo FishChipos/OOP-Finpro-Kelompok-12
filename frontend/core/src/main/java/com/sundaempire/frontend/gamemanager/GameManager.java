@@ -4,24 +4,17 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.sundaempire.frontend.player.PlayerManager;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public enum GameManager {
     INSTANCE;
 
     private final AssetManager assetManager;
     private final RoundManager roundManager;
-    private final List<PlayerManager> playerManagers = new ArrayList<>();
+    private final PlayerManager playerManager;
 
     private GameManager() {
         assetManager = new AssetManager();
-        playerManagers.add(new PlayerManager(GameActor.PLAYER_1));
-        roundManager = new RoundManager(playerManagers);
-    }
-
-    public List<PlayerManager> getPlayerManagers() {
-        return playerManagers;
+        playerManager = new PlayerManager();
+        roundManager = new RoundManager(playerManager);
     }
 
     public void loadAssets() {
@@ -53,5 +46,9 @@ public enum GameManager {
 
     public RoundManager getRoundManager() {
         return roundManager;
+    }
+
+    public PlayerManager getPlayerManager() {
+        return playerManager;
     }
 }
