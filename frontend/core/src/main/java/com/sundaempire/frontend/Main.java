@@ -66,12 +66,14 @@ public class Main extends ApplicationAdapter {
 
         //Unit system
         unitFactory = new UnitFactory();
-        unitPool = new UnitPool(unitFactory, gameMap, inputMultiplexer);
-        unitPool.obtain(new Vector2(0f, 0f), UnitType.EXPLORER, GameActor.PLAYER_1);
-        unitPool.obtain(new Vector2(0f, 0f), UnitType.SWORDSMAN, GameActor.PLAYER_1);
+        UnitPool.INSTANCE.setUnitFactory(unitFactory);
+        UnitPool.INSTANCE.setGameMap(gameMap);
+        UnitPool.INSTANCE.setInputMultiplexer(inputMultiplexer);
+        UnitPool.INSTANCE.obtain(new Vector2(0f, 0f), UnitType.EXPLORER, GameActor.PLAYER_1);
+        UnitPool.INSTANCE.obtain(new Vector2(0f, 0f), UnitType.SWORDSMAN, GameActor.PLAYER_1);
         GameManager.INSTANCE.getRoundManager().nextUnit();
 
-        ui = new UI(camera, inputMultiplexer);
+        ui = new UI(camera, inputMultiplexer, gameMap, UnitPool.INSTANCE.getActiveUnits());
 
         Gdx.input.setInputProcessor(inputMultiplexer);
     }
@@ -83,22 +85,9 @@ public class Main extends ApplicationAdapter {
         camera.update();
         batch.setProjectionMatrix(camera.combined);
         ui.update(delta);
-        gameMap.update(delta);
-
-        //update unit (logic only belum render)
-        for (Unit unit : unitPool.getActiveUnits()) {
-            unit.update(delta);
-        }
 
         ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
-        batch.begin();
-        gameMap.render(batch);
-
-        for (Unit unit : unitPool.getActiveUnits()) {
-            unit.render(batch);
-        }
         ui.render(batch);
-        batch.end();
     }
 
     @Override

@@ -10,11 +10,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Rectangle;
 import com.sundaempire.frontend.gamemanager.GameManager;
 import com.sundaempire.frontend.unit.Unit;
-import com.sundaempire.frontend.unit.commands.UnitCommand;
-import com.sundaempire.frontend.unit.commands.UnitCommandMoveDown;
-import com.sundaempire.frontend.unit.commands.UnitCommandMoveLeft;
-import com.sundaempire.frontend.unit.commands.UnitCommandMoveRight;
-import com.sundaempire.frontend.unit.commands.UnitCommandMoveUp;
+import com.sundaempire.frontend.unit.commands.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -43,6 +39,7 @@ public class UnitStateMoving extends UnitState {
         keyCommands.put(Input.Keys.S, new UnitCommandMoveDown());
         keyCommands.put(Input.Keys.D, new UnitCommandMoveRight());
         keyCommands.put(Input.Keys.A, new UnitCommandMoveLeft());
+        keyCommands.put(Input.Keys.E, new UnitCommandCreateSettlement());
     }
 
     @Override
@@ -54,7 +51,7 @@ public class UnitStateMoving extends UnitState {
     public void update(float delta) {
         if (nextCommand != null) {
 
-            if (nextCommand.execute(unit)) {
+            if (nextCommand.execute(unit) && unit.getMovement() <= 0) {
                 GameManager.INSTANCE.getRoundManager().nextUnit();
             }
 
@@ -69,23 +66,10 @@ public class UnitStateMoving extends UnitState {
     }
 
     private void drawActiveOutline(Batch batch) {
-        Texture texture = unit.getTexture();
-        if (!texture.getTextureData().isPrepared()) {
-            texture.getTextureData().prepare();
-        }
-        Pixmap pixmap = texture.getTextureData().consumePixmap();
-
-        Pixmap scaledPixmap = new Pixmap(pixmap.getWidth() + 4, pixmap.getHeight()  + 4, Pixmap.Format.RGBA8888);
-        scaledPixmap.setColor(0.98f, 0.82f, 0.02f, 1f);
-        scaledPixmap.drawPixmap(pixmap, 0, 0, pixmap.getWidth(), pixmap.getHeight(), 0, 0, scaledPixmap.getWidth(), scaledPixmap.getHeight());
-        pixmap.dispose();
-
-        Texture scaledTexture = new Texture(scaledPixmap);
-        scaledPixmap.dispose();
-
         Rectangle collider = unit.getCollider();
-
-        batch.draw(scaledTexture, collider.x - 2f, collider.y - 2f, collider.width + 4f, collider.height + 4f);
+        batch.setColor(0.92f, 0.84f, 0.02f, 1f);
+        batch.draw(unit.getUnitAssets().getOutlineTexture(), collider.x, collider.y, collider.width, collider.height);
+        batch.setColor(1f, 1f, 1f, 1f);
     }
 
     @Override

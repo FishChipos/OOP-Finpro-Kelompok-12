@@ -93,4 +93,12 @@ public class Tile {
             prop.dispose();
         }
     }
+
+    public TileEnvironment getEnvironment() {
+        return environment;
+    }
+
+    public List<TileProp> getProps() {
+        return props;
+    }
 }

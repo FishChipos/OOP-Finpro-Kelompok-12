@@ -1,5 +1,7 @@
 package com.sundaempire.frontend.gamemanager;
 
+import com.sundaempire.frontend.Notifiable;
+import com.sundaempire.frontend.Observable;
 import com.sundaempire.frontend.unit.Unit;
 import com.sundaempire.frontend.unit.states.UnitStateIdle;
 import com.sundaempire.frontend.unit.states.UnitStateMoving;
@@ -9,11 +11,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class RoundManager {
-    private int round = 0;
+public class RoundManager implements Observable {
+    private int round = 1;
     private GameActor currentGameActor = GameActor.PLAYER_1;
     private Map<GameActor, List<Unit>> gameActorUnits = new HashMap<>();
-    private int gameActorUnitIndex = 0;
+    private int gameActorUnitIndex = -1;
+
+    private List<Notifiable> roundChangeObservers = new ArrayList<>();
 
     public RoundManager() {
         for (GameActor gameActor : GameActor.values()) {
@@ -24,6 +28,10 @@ public class RoundManager {
     public void nextRound() {
         ++round;
         currentGameActor = GameActor.PLAYER_1;
+
+        for (Notifiable observer : roundChangeObservers) {
+            observer.notice();
+        }
     }
 
     public void nextTurn() {
@@ -38,8 +46,13 @@ public class RoundManager {
     }
 
     public void nextUnit() {
-        Unit unit = gameActorUnits.get(currentGameActor).get(gameActorUnitIndex);
-        unit.changeUnitState(new UnitStateIdle(unit));
+        Unit unit;
+
+        if (gameActorUnitIndex >= 0) {
+            unit = gameActorUnits.get(currentGameActor).get(gameActorUnitIndex);
+            unit.changeUnitState(new UnitStateIdle(unit));
+        }
+
         ++gameActorUnitIndex;
 
         if (gameActorUnitIndex >= gameActorUnits.get(currentGameActor).size()) {
@@ -48,6 +61,16 @@ public class RoundManager {
 
         unit = gameActorUnits.get(currentGameActor).get(gameActorUnitIndex);
         unit.changeUnitState(new UnitStateMoving(unit));
+    }
+
+    @Override
+    public void addObserver(Notifiable observer) {
+        roundChangeObservers.add(observer);
+    }
+
+    @Override
+    public void removeObserver(Notifiable observer) {
+        roundChangeObservers.remove(observer);
     }
 
     public void addUnit(Unit unit) {
@@ -65,5 +88,9 @@ public class RoundManager {
         catch (IndexOutOfBoundsException e) {
             return null;
         }
+    }
+
+    public int getRound() {
+        return round;
     }
 }

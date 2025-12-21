@@ -204,4 +204,8 @@ public class GameMap extends Actor {
             tile.dispose();
         }
     }
+
+    public Tile getTile(Vector2 newCoordinates) {
+        return tiles.get(columns * (int)newCoordinates.y + (int)newCoordinates.x);
+    }
 }
