@@ -2,16 +2,19 @@ package com.sundaempire.frontend.gamemanager;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
+import com.sundaempire.frontend.player.PlayerManager;
 
 public enum GameManager {
     INSTANCE;
 
     private final AssetManager assetManager;
     private final RoundManager roundManager;
+    private final PlayerManager playerManager;
 
     private GameManager() {
         assetManager = new AssetManager();
-        roundManager = new RoundManager();
+        playerManager = new PlayerManager();
+        roundManager = new RoundManager(playerManager);
     }
 
     public void loadAssets() {
@@ -43,5 +46,9 @@ public enum GameManager {
 
     public RoundManager getRoundManager() {
         return roundManager;
+    }
+
+    public PlayerManager getPlayerManager() {
+        return playerManager;
     }
 }

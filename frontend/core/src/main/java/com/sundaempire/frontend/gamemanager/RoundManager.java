@@ -3,6 +3,8 @@ package com.sundaempire.frontend.gamemanager;
 import com.badlogic.gdx.Game;
 import com.sundaempire.frontend.Notifiable;
 import com.sundaempire.frontend.Observable;
+import com.sundaempire.frontend.player.Player;
+import com.sundaempire.frontend.player.PlayerManager;
 import com.sundaempire.frontend.unit.Unit;
 import com.sundaempire.frontend.unit.states.UnitStateIdle;
 import com.sundaempire.frontend.unit.states.UnitStateMoving;
@@ -14,18 +16,16 @@ import static com.sundaempire.frontend.gamemanager.GameActor.PLAYER_1;
 public class RoundManager implements Observable {
     private int round = 1;
     private GameActor currentGameActor = PLAYER_1;
-    private Map<GameActor, List<Unit>> gameActorUnits = new HashMap<>();
     private int currentUnitIndex = -1;
+    private PlayerManager playerManager;
     private Unit currentUnit;
     private List<Unit> toBeAdded = new ArrayList<>();
     private List<Unit> toBeRemoved = new ArrayList<>();
 
     private List<Notifiable> roundChangeObservers = new ArrayList<>();
 
-    public RoundManager() {
-        for (GameActor gameActor : GameActor.values()) {
-            gameActorUnits.put(gameActor, new ArrayList<>());
-        }
+    public RoundManager(PlayerManager playerManager) {
+        this.playerManager = playerManager;
     }
 
     public void nextRound() {
@@ -56,11 +56,11 @@ public class RoundManager implements Observable {
 
         ++currentUnitIndex;
 
-        if (currentUnitIndex >= gameActorUnits.get(currentGameActor).size()) {
+        if (currentUnitIndex >= playerManager.getPlayer(currentGameActor).getUnits().size()) {
             nextTurn();
         }
 
-        currentUnit = gameActorUnits.get(currentGameActor).get(currentUnitIndex);
+        currentUnit = playerManager.getPlayer(currentGameActor).getUnits().get(currentUnitIndex);
         currentUnit.changeUnitState(new UnitStateMoving(currentUnit));
     }
 
@@ -76,13 +76,13 @@ public class RoundManager implements Observable {
 
     public void updateUnitList() {
         for (Unit unit : toBeRemoved) {
-            gameActorUnits.get(unit.getOwner()).remove(unit);
+            playerManager.getPlayer(unit.getOwner()).getUnits().remove(unit);
         }
 
         toBeRemoved.clear();
 
         for (Unit unit : toBeAdded) {
-            gameActorUnits.get(unit.getOwner()).add(unit);
+            playerManager.getPlayer(unit.getOwner()).getUnits().add(unit);
         }
 
         toBeAdded.clear();
