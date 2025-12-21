@@ -1,14 +1,10 @@
 package com.sundaempire.frontend.gamemap.tile;
 
-import com.badlogic.gdx.InputAdapter;
-import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.sundaempire.frontend.gamemap.GameMap;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,7 +58,7 @@ public class Tile {
         props.remove(prop);
     }
 
-    public void render(SpriteBatch batch) {
+    public void render(Batch batch) {
         if (environment != null) {
             environment.render(batch);
         }
@@ -72,10 +68,10 @@ public class Tile {
         }
     }
 
-    public void renderSelectedBox(SpriteBatch batch) {
+    public void renderSelectedBox(Batch batch) {
         if (selected) {
             Pixmap selectBoxPixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
-            selectBoxPixmap.setColor(0.95f, 0.8f, 0.02f, 1f);
+            selectBoxPixmap.setColor(1f, 1f, 1f, 1f);
             selectBoxPixmap.fill();
             Texture selectBoxTexture = new Texture(selectBoxPixmap);
             selectBoxPixmap.dispose();

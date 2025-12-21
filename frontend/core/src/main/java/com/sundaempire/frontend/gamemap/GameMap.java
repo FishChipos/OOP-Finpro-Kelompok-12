@@ -6,18 +6,19 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.sundaempire.frontend.gamemap.tile.Tile;
 import com.sundaempire.frontend.gamemap.tile.TileFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class GameMap {
+public class GameMap extends Actor {
     private final Vector2 origin = new Vector2();
     private final Vector2 tileDimensions = new Vector2();
     private final float gridLineThickness;
@@ -62,8 +63,21 @@ public class GameMap {
         return origin.sub(originOffset);
     }
 
+    public Vector2 getPositionFromCoordinates(Vector2 coordinates) {
+        Vector2 position = new Vector2(coordinates);
+        return position.scl(tileDimensions).add(getOriginCentered());
+    }
+
+    public boolean isCoordinateInBounds(Vector2 coordinates) {
+        return coordinates.x >= 0 && coordinates.x < columns && coordinates.y >= 0 && coordinates.y < rows;
+    }
+
     public void setOrigin(Vector2 origin) {
         this.origin.set(origin);
+    }
+
+    public Vector2 getTileDimensions() {
+        return tileDimensions;
     }
 
     public void setTileDimensions(Vector2 tileDimensions) {
@@ -140,7 +154,7 @@ public class GameMap {
         }
     }
 
-    public void update() {
+    public void update(float delta) {
         for (int row = 0; row < rows; ++row) {
             for (int column = 0; column < columns; ++column) {
                 getTile(column, row).setPosition(getOriginCentered().add(column * tileDimensions.x, row * tileDimensions.y));
@@ -149,7 +163,7 @@ public class GameMap {
         }
     }
 
-    public void render(SpriteBatch batch) {
+    public void render(Batch batch) {
         // Render tiles.
         for (Tile tile : tiles) {
             tile.render(batch);
@@ -163,7 +177,7 @@ public class GameMap {
         }
     }
 
-    private void renderGrid(SpriteBatch spriteBatch) {
+    private void renderGrid(Batch spriteBatch) {
         // Initialize a texture with the color we want.
         Pixmap gridLinePixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
         gridLinePixmap.setColor(1f, 1f, 1f, 0.5f);

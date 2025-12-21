@@ -2,20 +2,36 @@ package com.sundaempire.frontend.gamemanager;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
+import com.sundaempire.frontend.player.PlayerManager;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public enum GameManager {
     INSTANCE;
 
     private final AssetManager assetManager;
+    private final RoundManager roundManager;
+    private final List<PlayerManager> playerManagers = new ArrayList<>();
 
     private GameManager() {
         assetManager = new AssetManager();
+        playerManagers.add(new PlayerManager(GameActor.PLAYER_1));
+        roundManager = new RoundManager(playerManagers);
+    }
+
+    public List<PlayerManager> getPlayerManagers() {
+        return playerManagers;
     }
 
     public void loadAssets() {
         assetManager.load("textures/tiles/grass.png", Texture.class);
         assetManager.load("textures/tiles/water.png", Texture.class);
         assetManager.load("textures/tiles/mountain.png", Texture.class);
+
+        assetManager.load("textures/units/explorer.png", Texture.class);
+        assetManager.load("textures/units/swordsman.png", Texture.class);
+        assetManager.load("textures/units/archer.png", Texture.class);
 
         assetManager.load("textures/buildings/farm.png", Texture.class);
         assetManager.load("textures/buildings/guard_tower.png", Texture.class);
@@ -27,5 +43,9 @@ public enum GameManager {
 
     public AssetManager getAssetManager() {
         return assetManager;
+    }
+
+    public RoundManager getRoundManager() {
+        return roundManager;
     }
 }
