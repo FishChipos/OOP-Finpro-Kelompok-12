@@ -37,6 +37,8 @@ public class GameMap extends Actor implements Observable {
 
     private float zoom;
 
+    private Texture gridLineTexture;
+
     public GameMap(Vector2 origin, Vector2 tileDimensions, int columns, int rows, float gridLineThickness, TileFactory tileFactory, OrthographicCamera camera) {
         this.origin.set(origin);
         this.tileDimensions.set(tileDimensions);
@@ -44,10 +46,17 @@ public class GameMap extends Actor implements Observable {
         this.rows = rows;
         this.gridLineThickness = gridLineThickness;
         this.tileFactory = tileFactory;
+        tileFactory.setGameMap(this);
         this.camera = camera;
         zoom = 1.0f;
 
         tiles = new ArrayList<Tile>(columns * rows);
+
+        Pixmap gridLinePixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
+        gridLinePixmap.setColor(1f, 1f, 1f, 0.5f);
+        gridLinePixmap.fill();
+        gridLineTexture = new Texture(gridLinePixmap);
+        gridLinePixmap.dispose();
 
         generateTiles();
     }
@@ -165,19 +174,18 @@ public class GameMap extends Actor implements Observable {
     public void update(float delta) {
         for (int row = 0; row < rows; ++row) {
             for (int column = 0; column < columns; ++column) {
-                getTile(column, row).setPosition(getOriginCentered().add(column * tileDimensions.x, row * tileDimensions.y));
+                getTile(column, row).setCoordinates(new Vector2(column, row));
                 getTile(column, row).setDimensions(tileDimensions);
+                getTile(column, row).update(delta);
             }
         }
     }
 
     public void render(Batch batch) {
-        // Render tiles.
         for (Tile tile : tiles) {
             tile.render(batch);
         }
 
-        // Render the grid.
         renderGrid(batch);
 
         for (Tile tile : tiles) {
@@ -186,14 +194,6 @@ public class GameMap extends Actor implements Observable {
     }
 
     private void renderGrid(Batch spriteBatch) {
-        // Initialize a texture with the color we want.
-        Pixmap gridLinePixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
-        gridLinePixmap.setColor(1f, 1f, 1f, 0.5f);
-        gridLinePixmap.fill();
-        Texture gridLineTexture = new Texture(gridLinePixmap);
-        gridLinePixmap.dispose();
-
-        // Get the map dimensions.
         Vector2 mapDimensions = (new Vector2(tileDimensions)).scl(columns, rows);
         Vector2 originCentered = getOriginCentered();
 
@@ -210,6 +210,10 @@ public class GameMap extends Actor implements Observable {
     public void dispose() {
         for (Tile tile : tiles) {
             tile.dispose();
+        }
+        if (gridLineTexture != null) {
+            gridLineTexture.dispose();
+            gridLineTexture = null;
         }
     }
 

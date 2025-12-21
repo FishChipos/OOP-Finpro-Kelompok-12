@@ -24,13 +24,14 @@ public class RoundManager implements Observable {
 
     private List<Notifiable> roundChangeObservers = new ArrayList<>();
 
+    private boolean started = false;
+
     public RoundManager(PlayerManager playerManager) {
         this.playerManager = playerManager;
     }
 
     public void nextRound() {
         ++round;
-        currentGameActor = PLAYER_1;
 
         for (Notifiable observer : roundChangeObservers) {
             observer.notice();
@@ -41,15 +42,15 @@ public class RoundManager implements Observable {
         updateUnitList();
         currentUnitIndex = 0;
 
-        if (currentGameActor == PLAYER_1) {
-            nextRound();
-            return;
-        }
-
         currentGameActor = currentGameActor.nextGameActor();
+        if (currentGameActor == PLAYER_1 && started) {
+            nextRound();
+        }
     }
 
     public void nextUnit() {
+        updateUnitList();
+
         if (currentUnit != null) {
             currentUnit.changeUnitState(new UnitStateIdle(currentUnit));
         }
@@ -62,6 +63,8 @@ public class RoundManager implements Observable {
 
         currentUnit = playerManager.getPlayer(currentGameActor).getUnits().get(currentUnitIndex);
         currentUnit.changeUnitState(new UnitStateMoving(currentUnit));
+
+        started = true;
     }
 
     @Override
@@ -94,6 +97,10 @@ public class RoundManager implements Observable {
 
     public void removeUnit(Unit unit) {
         toBeRemoved.add(unit);
+    }
+
+    public GameActor getCurrentGameActor() {
+        return currentGameActor;
     }
 
     public Unit getActiveUnit() {

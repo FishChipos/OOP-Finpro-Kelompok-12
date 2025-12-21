@@ -10,12 +10,10 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.sundaempire.frontend.gamemanager.GameActor;
 import com.sundaempire.frontend.gamemanager.GameManager;
 import com.sundaempire.frontend.gamemap.tile.Tile;
 import com.sundaempire.frontend.settlement.Settlement;
@@ -32,7 +30,9 @@ public class UIStateGame extends UIState {
     private InputAdapter inputProcessor;
 
     Label roundCounter;
+    Label goldCounter;
     Label tileNameLabel;
+    Label settlementLabel;
 
     public UIStateGame(UI ui) {
         this.ui = ui;
@@ -53,12 +53,17 @@ public class UIStateGame extends UIState {
 
         roundCounter = new Label("", skin);
         updateRoundCounter();
+        goldCounter = new Label("", skin);
+        updateGoldCounter();
         Label currentlyMoving = new Label("PLAYER 1", skin);
+        Image goldIcon = new Image(GameManager.INSTANCE.getAssetManager().get("textures/gold.png", Texture.class));
 
         gameViewportTable.top().pad(20f);
-        gameViewportTable.row().expandY().top();
+        gameViewportTable.row().expandY().top().space(20f);
         gameViewportTable.add(roundCounter).width(10f);
         gameViewportTable.add(currentlyMoving).expandX();
+        gameViewportTable.add(goldCounter).width(10f);
+        gameViewportTable.add(goldIcon).width(20f);
 
         Table sidepanelTable = new Table();
 
@@ -113,7 +118,9 @@ public class UIStateGame extends UIState {
         });
 
         tileNameLabel = new Label("", skin);
-        tileNameLabel.setFontScale(2f);
+        tileNameLabel.setFontScale(1.5f);
+        settlementLabel = new Label("", skin);
+        settlementLabel.setFontScale(2f);
 
         // Set background for the side panel.
 
@@ -134,6 +141,7 @@ public class UIStateGame extends UIState {
         sidepanelTable.defaults().colspan(3).space(10f);
         sidepanelTable.row();
         sidepanelTable.add(tileNameLabel);
+        sidepanelTable.add(settlementLabel);
 
         table.row();
         table.add(gameViewportTable).fillX().expandX().left().top();
@@ -194,11 +202,18 @@ public class UIStateGame extends UIState {
     @Override
     public void notice() {
         updateRoundCounter();
+        updateGoldCounter();
         updateTileInfo();
+        updateSettlementInfo();
     }
 
     private void updateRoundCounter() {
         roundCounter.setText("ROUND " + GameManager.INSTANCE.getRoundManager().getRound());
+    }
+
+    private void updateGoldCounter() {
+        GameActor currentGameActor = GameManager.INSTANCE.getRoundManager().getCurrentGameActor();
+        goldCounter.setText(GameManager.INSTANCE.getPlayerManager().getPlayer(currentGameActor).getGold());
     }
 
     private void updateTileInfo() {
@@ -209,5 +224,23 @@ public class UIStateGame extends UIState {
         }
 
         tileNameLabel.setText(selectedTile.getEnvironment().getName());
+    }
+
+    private void updateSettlementInfo() {
+        Tile selectedTile = UI.INSTANCE.getGameMap().getSelectedTile();
+
+        if (selectedTile == null) {
+            settlementLabel.setText("");
+            return;
+        }
+
+        Settlement settlement = GameManager.INSTANCE.getPlayerManager().getSettlement(selectedTile.getCoordinates());
+
+        if (settlement == null) {
+            settlementLabel.setText("");
+        }
+        else {
+            settlementLabel.setText("Settlement");
+        }
     }
 }

@@ -19,6 +19,7 @@ import com.sundaempire.frontend.unit.Unit;
 import com.sundaempire.frontend.unit.UnitFactory;
 import com.sundaempire.frontend.unit.UnitPool;
 import com.sundaempire.frontend.unit.UnitType;
+import com.sundaempire.frontend.backend.BackendService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,11 +66,28 @@ public class Main extends ApplicationAdapter {
         UnitPool.INSTANCE.setGameMap(gameMap);
         UnitPool.INSTANCE.setInputMultiplexer(inputMultiplexer);
         UnitPool.INSTANCE.obtain(new Vector2(0f, 0f), UnitType.EXPLORER, GameActor.PLAYER_1);
+        System.out.println("After obtain 1: round=" + GameManager.INSTANCE.getRoundManager().getRound() + ", player1 units=" + GameManager.INSTANCE.getPlayerManager().getPlayer(GameActor.PLAYER_1).getUnits().size());
         UnitPool.INSTANCE.obtain(new Vector2(0f, 1f), UnitType.SWORDSMAN, GameActor.PLAYER_1);
+        System.out.println("After obtain 2: round=" + GameManager.INSTANCE.getRoundManager().getRound() + ", player1 units=" + GameManager.INSTANCE.getPlayerManager().getPlayer(GameActor.PLAYER_1).getUnits().size());
         UnitPool.INSTANCE.obtain(new Vector2(1f, 0f), UnitType.ARCHER, GameActor.PLAYER_1);
+        System.out.println("After obtain 3: round=" + GameManager.INSTANCE.getRoundManager().getRound() + ", player1 units=" + GameManager.INSTANCE.getPlayerManager().getPlayer(GameActor.PLAYER_1).getUnits().size());
+        GameManager.INSTANCE.getRoundManager().nextUnit();
+        System.out.println("After nextUnit(): round=" + GameManager.INSTANCE.getRoundManager().getRound() + ", currentActor=" + GameManager.INSTANCE.getRoundManager().getCurrentGameActor() + ", player1 units=" + GameManager.INSTANCE.getPlayerManager().getPlayer(GameActor.PLAYER_1).getUnits().size());
         GameManager.INSTANCE.getRoundManager().nextUnit();
 
         UI.INSTANCE.initialize(camera, inputMultiplexer, gameMap, UnitPool.INSTANCE.getActiveUnits());
+
+        BackendService.INSTANCE.getInfo(new BackendService.ResponseHandler() {
+            @Override
+            public void onSuccess(String response) {
+                System.out.println("Backend /api/info response: " + response);
+            }
+
+            @Override
+            public void onError(String error) {
+                System.out.println("Backend /api/info error: " + error);
+            }
+        });
 
         Gdx.input.setInputProcessor(inputMultiplexer);
     }

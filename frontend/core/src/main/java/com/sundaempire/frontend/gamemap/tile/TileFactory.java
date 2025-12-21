@@ -2,6 +2,7 @@ package com.sundaempire.frontend.gamemap.tile;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.sundaempire.frontend.gamemap.GameMap;
 import com.sundaempire.frontend.gamemap.tile.environments.TileEnvironmentGrass;
 import com.sundaempire.frontend.gamemap.tile.environments.TileEnvironmentMountain;
 import com.sundaempire.frontend.gamemap.tile.environments.TileEnvironmentWater;
@@ -12,6 +13,7 @@ import java.util.List;
 
 public class TileFactory {
     private final NoisePerlin noise;
+    private GameMap gameMap;
 
     public TileFactory(long seed, int gridSize) {
         noise = new NoisePerlin(seed, gridSize);
@@ -19,13 +21,14 @@ public class TileFactory {
 
     public Tile create(Vector2 tilePosition, Vector2 tileDimensions, TileEnvironment tileEnvironment, List<TileProp> tileProps) {
         Tile tile = new Tile();
+        tile.setGameMap(gameMap);
         tile.setEnvironment(tileEnvironment);
 
         tile.setPosition(tilePosition);
         tile.setDimensions(tileDimensions);
 
         tileEnvironment.setPosition(tilePosition);
-        tileEnvironment.setPosition(tileDimensions);
+        tileEnvironment.setDimensions(tileDimensions);
 
         for (TileProp tileProp : tileProps) {
             tileProp.setPosition(tilePosition);
@@ -53,5 +56,9 @@ public class TileFactory {
 
     public Tile createDefault() {
         return create(new Vector2(0f, 0f), new Vector2(0f, 0f), new TileEnvironmentGrass(), new ArrayList<>());
+    }
+
+    public void setGameMap(GameMap gameMap) {
+        this.gameMap = gameMap;
     }
 }

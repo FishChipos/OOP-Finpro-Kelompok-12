@@ -1,5 +1,6 @@
 package com.sundaempire.frontend.player;
 
+import com.sundaempire.frontend.Notifiable;
 import com.sundaempire.frontend.gamemanager.GameActor;
 import com.sundaempire.frontend.unit.Unit;
 import com.sundaempire.frontend.settlement.Settlement;
@@ -10,6 +11,7 @@ import java.util.List;
 public class Player {
 
     private final GameActor actor;
+    private final PlayerManager playerManager;
 
     private int gold = 100;
     private int food = 50;
@@ -17,8 +19,9 @@ public class Player {
     private final List<Unit> units = new ArrayList<>();
     private final List<Settlement> settlements = new ArrayList<>();
 
-    public Player(GameActor actor) {
+    public Player(GameActor actor, PlayerManager playerManager) {
         this.actor = actor;
+        this.playerManager = playerManager;
     }
 
     public boolean canBuildSettlement(int cost) {
@@ -27,10 +30,12 @@ public class Player {
 
     public void spendGold(int amount) {
         gold -= amount;
+        playerManager.notifyObservers();
     }
 
     public void addGold(int amount) {
         gold += amount;
+        playerManager.notifyObservers();
     }
 
     public int getGold() {
