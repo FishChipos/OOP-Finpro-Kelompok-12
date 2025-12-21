@@ -3,6 +3,8 @@ package com.sundaempire.frontend.ui.states;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.sundaempire.frontend.ui.UI;
 import com.sundaempire.frontend.ui.UIState;
 
@@ -31,6 +33,14 @@ public class UIMainMenuState implements UIState {
 
     @Override
     public void render() {
+        SpriteBatch batch = ui.getBatch();
+        BitmapFont font = ui.getFont();
+
+        batch.begin();
+        font.draw(batch, "CIVILIZATION", 300, 420);
+        font.draw(batch, "PRESS ENTER TO START", 270, 360);
+        font.draw(batch, "PRESS ESC TO EXIT", 290, 320);
+        batch.end();
     }
 
     @Override

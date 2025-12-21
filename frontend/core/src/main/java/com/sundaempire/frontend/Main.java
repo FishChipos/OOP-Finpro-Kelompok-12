@@ -11,6 +11,9 @@ import com.badlogic.gdx.utils.TimeUtils;
 import com.sundaempire.frontend.gamemanager.GameManager;
 import com.sundaempire.frontend.gamemap.GameMap;
 import com.sundaempire.frontend.gamemap.tile.TileFactory;
+import com.sundaempire.frontend.ui.UI;
+import com.sundaempire.frontend.ui.states.UIGameState;
+import com.sundaempire.frontend.ui.states.UIMainMenuState;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class Main extends ApplicationAdapter {
@@ -25,6 +28,7 @@ public class Main extends ApplicationAdapter {
 
     private TileFactory tileFactory;
     private GameMap gameMap;
+    private UI ui;
 
     private float screenWidth, screenHeight;
 
@@ -38,6 +42,13 @@ public class Main extends ApplicationAdapter {
         camera.update();
         batch = new SpriteBatch();
         inputMultiplexer = new InputMultiplexer();
+
+        ui = new UI(inputMultiplexer);
+
+        UIGameState gameState = new UIGameState(camera, ui);
+        UIMainMenuState mainMenuState = new UIMainMenuState(ui, gameState);
+
+        ui.setState(mainMenuState);
 
         GameManager.INSTANCE.loadAssets();
 
@@ -56,11 +67,13 @@ public class Main extends ApplicationAdapter {
         camera.update();
         batch.setProjectionMatrix(camera.combined);
         gameMap.update();
+        ui.update(Gdx.graphics.getDeltaTime());
 
         ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
         batch.begin();
         gameMap.render(batch);
         batch.end();
+        ui.render();
     }
 
     @Override
