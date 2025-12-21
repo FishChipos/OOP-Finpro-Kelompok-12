@@ -5,12 +5,13 @@ import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector3;
+import com.sundaempire.frontend.gamemanager.GameManager;
 import com.sundaempire.frontend.ui.UIState;
 import com.sundaempire.frontend.unit.Unit;
+import com.sundaempire.frontend.unit.commands.UnitCommandMoveRight;
 
 public class UIGameState implements UIState {
 
-    private Unit selectedUnit;
     private InputAdapter inputProcessor;
     private final OrthographicCamera camera;
 
@@ -24,7 +25,7 @@ public class UIGameState implements UIState {
 
     @Override
     public void onExit() {
-        selectedUnit = null;
+
     }
 
     @Override
@@ -40,9 +41,11 @@ public class UIGameState implements UIState {
         inputProcessor = new InputAdapter() {
             @Override
             public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-                if (button == Input.Buttons.RIGHT && selectedUnit != null) {
+                Unit unit = GameManager.INSTANCE.getRoundManager().getActiveUnit();
+
+                if (button == Input.Buttons.RIGHT && unit != null) {
                     Vector3 worldPos = camera.unproject(new Vector3(screenX, screenY, 0));
-                    selectedUnit.moveTo(worldPos.x, worldPos.y);
+                    unit.getUnitState().setNextCommand(new UnitCommandMoveRight());
                     return true;
                 }
                 return false;
@@ -56,15 +59,5 @@ public class UIGameState implements UIState {
     public void unregisterInputProcessor(InputMultiplexer multiplexer) {
         multiplexer.removeProcessor(inputProcessor);
         inputProcessor = null;
-    }
-
-    public void selectUnit(Unit unit) {
-        if (selectedUnit != null) {
-            selectedUnit.deselect();
-        }
-        selectedUnit = unit;
-        if (selectedUnit != null) {
-            selectedUnit.select();
-        }
     }
 }

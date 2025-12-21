@@ -8,12 +8,14 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.TimeUtils;
+import com.sundaempire.frontend.gamemanager.GameActor;
 import com.sundaempire.frontend.gamemanager.GameManager;
 import com.sundaempire.frontend.gamemap.GameMap;
 import com.sundaempire.frontend.gamemap.tile.TileFactory;
 import com.sundaempire.frontend.unit.Unit;
 import com.sundaempire.frontend.unit.UnitFactory;
 import com.sundaempire.frontend.unit.UnitPool;
+import com.sundaempire.frontend.unit.UnitType;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class Main extends ApplicationAdapter {
@@ -31,7 +33,8 @@ public class Main extends ApplicationAdapter {
 
     private UnitFactory unitFactory;
     private UnitPool unitPool;
-    private Unit exampleUnit;
+    private Unit explorer;
+    private Unit swordsman;
 
     private float screenWidth, screenHeight;
 
@@ -57,10 +60,11 @@ public class Main extends ApplicationAdapter {
 
         //Unit system
         unitFactory = new UnitFactory();
-        unitPool = new UnitPool();
+        unitPool = new UnitPool(unitFactory, gameMap, inputMultiplexer);
 
-        exampleUnit = unitPool.obtain(unitFactory, UnitFactory.UnitType.SWORDSMAN);
-
+        explorer = unitPool.obtain(new Vector2(0f, 0f), UnitType.EXPLORER, GameActor.PLAYER_1);
+        swordsman = unitPool.obtain(new Vector2(0f, 0f), UnitType.SWORDSMAN, GameActor.PLAYER_1);
+        GameManager.INSTANCE.getRoundManager().nextUnit();
 
         Gdx.input.setInputProcessor(inputMultiplexer);
     }
@@ -72,11 +76,14 @@ public class Main extends ApplicationAdapter {
         gameMap.update();
 
         //update unit (logic only belum render)
-        exampleUnit.update(Gdx.graphics.getDeltaTime());
+        explorer.update(Gdx.graphics.getDeltaTime());
+        swordsman.update(Gdx.graphics.getDeltaTime());
 
         ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
         batch.begin();
         gameMap.render(batch);
+        explorer.render(batch);
+        swordsman.render(batch);
         batch.end();
     }
 
@@ -98,6 +105,6 @@ public class Main extends ApplicationAdapter {
         batch.dispose();
         gameMap.dispose();
 
-        unitPool.free(exampleUnit);
+        unitPool.release(explorer);
     }
 }

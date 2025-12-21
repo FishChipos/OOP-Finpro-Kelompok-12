@@ -1,28 +1,24 @@
 package com.sundaempire.frontend.unit;
 
+import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.math.Vector2;
+import com.sundaempire.frontend.gamemanager.GameActor;
+import com.sundaempire.frontend.gamemap.GameMap;
+
 public class UnitFactory {
-
-    public enum UnitType {
-        SWORDSMAN,
-        ARCHER,
-        EXPLORER
+    public Unit createUnit() {
+        Unit unit = new Unit();
+        return unit;
     }
 
-    public Unit createUnit(UnitType type) {
+    public Unit configureUnit(Vector2 position, Unit unit, UnitType unitType, GameActor owner, GameMap gameMap, InputMultiplexer inputMultiplexer) {
+        unit.setPosition(position);
+        unit.setUnitType(unitType);
+        unit.setOwner(owner);
+        unit.setGameMap(gameMap);
+        unit.setInputMultiplexer(inputMultiplexer);
+        unit.configure();
 
-        switch (type) {
-            case SWORDSMAN:
-                return new Unit("Swordsman", 100, 10, 1);
-
-            case ARCHER:
-                return new Unit("Archer", 80, 15, 1);
-
-            case EXPLORER:
-                return new Unit("Explorer", 70, 5, 2);
-
-            default:
-                throw new IllegalArgumentException("Unknown unit type");
-        }
+        return unit;
     }
-
 }

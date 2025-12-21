@@ -62,8 +62,21 @@ public class GameMap {
         return origin.sub(originOffset);
     }
 
+    public Vector2 getPositionFromCoordinates(Vector2 coordinates) {
+        Vector2 position = new Vector2(coordinates);
+        return position.scl(tileDimensions).add(getOriginCentered());
+    }
+
+    public boolean isCoordinateInBounds(Vector2 coordinates) {
+        return coordinates.x >= 0 && coordinates.x < columns && coordinates.y >= 0 && coordinates.y < rows;
+    }
+
     public void setOrigin(Vector2 origin) {
         this.origin.set(origin);
+    }
+
+    public Vector2 getTileDimensions() {
+        return tileDimensions;
     }
 
     public void setTileDimensions(Vector2 tileDimensions) {
