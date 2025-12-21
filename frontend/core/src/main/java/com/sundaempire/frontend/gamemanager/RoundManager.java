@@ -8,14 +8,10 @@ import com.sundaempire.frontend.player.PlayerManager;
 import com.sundaempire.frontend.unit.Unit;
 import com.sundaempire.frontend.unit.states.UnitStateIdle;
 import com.sundaempire.frontend.unit.states.UnitStateMoving;
-import com.sundaempire.frontend.player.PlayerManager;
 
-import java.util.List;
+import java.util.*;
 
-public class RoundManager {
-    private int round = 0;
-    private GameActor currentGameActor = GameActor.PLAYER_1;
-    private int gameActorUnitIndex = 0;
+import static com.sundaempire.frontend.gamemanager.GameActor.PLAYER_1;
 
 public class RoundManager implements Observable {
     private int round = 1;
@@ -54,13 +50,11 @@ public class RoundManager implements Observable {
     }
 
     public void nextUnit() {
-        PlayerManager activePlayer = getCurrentPlayer();
-        List<Unit> units = activePlayer.getUnits();
-        if (units.isEmpty()) return;
+        if (currentUnit != null) {
+            currentUnit.changeUnitState(new UnitStateIdle(currentUnit));
+        }
 
-        Unit unit = units.get(gameActorUnitIndex);
-        unit.changeUnitState(new UnitStateIdle(unit));
-        ++gameActorUnitIndex;
+        ++currentUnitIndex;
 
         if (currentUnitIndex >= playerManager.getPlayer(currentGameActor).getUnits().size()) {
             nextTurn();
@@ -90,15 +84,23 @@ public class RoundManager implements Observable {
         for (Unit unit : toBeAdded) {
             playerManager.getPlayer(unit.getOwner()).getUnits().add(unit);
         }
-        return null;
+
+        toBeAdded.clear();
+    }
+
+    public void addUnit(Unit unit) {
+        toBeAdded.add(unit);
+    }
+
+    public void removeUnit(Unit unit) {
+        toBeRemoved.add(unit);
     }
 
     public Unit getActiveUnit() {
-        PlayerManager activePlayer = getCurrentPlayer();
-        try {
-            return activePlayer.getUnits().get(gameActorUnitIndex);
-        } catch (IndexOutOfBoundsException e) {
-            return null;
-        }
+        return currentUnit;
+    }
+
+    public int getRound() {
+        return round;
     }
 }

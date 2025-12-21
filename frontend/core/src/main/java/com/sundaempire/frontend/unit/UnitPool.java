@@ -6,7 +6,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.sundaempire.frontend.gamemanager.GameActor;
 import com.sundaempire.frontend.gamemanager.GameManager;
 import com.sundaempire.frontend.gamemap.GameMap;
-import com.sundaempire.frontend.player.PlayerManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,13 +44,8 @@ public enum UnitPool {
             return null;
         }
 
-        unitFactory.configureUnit(position, unit, unitType, owner, gameMap, inputMultiplexer);
-        PlayerManager player = GameManager.INSTANCE.getPlayerManagers()
-            .stream()
-            .filter(p -> p.getActor() == owner)
-            .findFirst()
-            .orElse(null);
-        if (player != null) player.addUnit(unit);
+        UnitFactory.configureUnit(coordinates, unit, unitType, owner, gameMap, inputMultiplexer);
+        GameManager.INSTANCE.getRoundManager().addUnit(unit);
 
         activeUnits.add(unit);
 
@@ -62,12 +56,7 @@ public enum UnitPool {
         unit.dispose();
         inactiveUnits.add(unit);
         activeUnits.remove(unit);
-        PlayerManager player = GameManager.INSTANCE.getPlayerManagers()
-            .stream()
-            .filter(p -> p.getActor() == unit.getOwner())
-            .findFirst()
-            .orElse(null);
-        if (player != null) player.removeUnit(unit);
+        GameManager.INSTANCE.getRoundManager().removeUnit(unit);
     }
 
     public List<Unit> getActiveUnits() {
@@ -75,9 +64,10 @@ public enum UnitPool {
     }
 
     public void releaseAll() {
-        List<Unit> copy = new ArrayList<>(getActiveUnits());
-        for (Unit unit : copy) {
-            release(unit);
+        for (Unit unit : getActiveUnits()) {
+            unit.dispose();
+            inactiveUnits.add(unit);
+            GameManager.INSTANCE.getRoundManager().removeUnit(unit);
         }
 
         activeUnits.clear();
