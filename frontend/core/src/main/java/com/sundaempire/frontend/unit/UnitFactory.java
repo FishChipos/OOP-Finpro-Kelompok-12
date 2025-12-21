@@ -6,13 +6,13 @@ import com.sundaempire.frontend.gamemanager.GameActor;
 import com.sundaempire.frontend.gamemap.GameMap;
 
 public class UnitFactory {
-    public Unit createUnit() {
+    public static Unit createUnit() {
         Unit unit = new Unit();
         return unit;
     }
 
-    public Unit configureUnit(Vector2 position, Unit unit, UnitType unitType, GameActor owner, GameMap gameMap, InputMultiplexer inputMultiplexer) {
-        unit.setPosition(position);
+    public static Unit configureUnit(Vector2 coordinates, Unit unit, UnitType unitType, GameActor owner, GameMap gameMap, InputMultiplexer inputMultiplexer) {
+        unit.setCoordinates(coordinates);
         unit.setUnitType(unitType);
         unit.setOwner(owner);
         unit.setGameMap(gameMap);

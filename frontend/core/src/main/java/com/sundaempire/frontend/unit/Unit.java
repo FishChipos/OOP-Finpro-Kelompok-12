@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.sundaempire.frontend.gamemanager.GameActor;
 import com.sundaempire.frontend.gamemanager.GameManager;
 import com.sundaempire.frontend.gamemap.GameMap;
+import com.sundaempire.frontend.unit.commands.UnitCommand;
 import com.sundaempire.frontend.unit.states.UnitState;
 import com.sundaempire.frontend.unit.states.UnitStateIdle;
 
@@ -16,26 +17,30 @@ public class Unit extends Actor {
     private UnitType unitType;
     private GameActor owner;
 
-    private UnitState unitState = new UnitStateIdle(this);
+    private UnitState unitState;
     private GameMap gameMap;
     private InputMultiplexer inputMultiplexer;
 
     private final UnitStats unitStats = new UnitStats();
+    private final UnitAssets unitAssets = new UnitAssets();
     private Vector2 coordinates = new Vector2();
-    private Rectangle collider = new Rectangle();
-    private Texture texture;
+    private final Rectangle collider = new Rectangle();
 
     private int movement;
 
     public void configure() {
         collider.setSize(gameMap.getTileDimensions().x, gameMap.getTileDimensions().y);
         unitStats.set(unitType.getUnitStats());
-        texture = GameManager.INSTANCE.getAssetManager().get(unitType.getTexturePath());
+        unitAssets.set(unitType.getUnitAssets());
+        changeUnitState(new UnitStateIdle(this));
     }
 
     public void changeUnitState(UnitState nextUnitState) {
-        unitState.exit();
-        unitState.deregisterInputProcessor(inputMultiplexer);
+        if (unitState != null) {
+            unitState.exit();
+            unitState.deregisterInputProcessor(inputMultiplexer);
+        }
+
         unitState = nextUnitState;
         unitState.enter();
         unitState.registerInputProcessor(inputMultiplexer);
@@ -52,6 +57,10 @@ public class Unit extends Actor {
 
     public void render(Batch batch) {
         unitState.render(batch);
+    }
+
+    public void dispose() {
+
     }
 
     public UnitType getUnitType() {
@@ -98,8 +107,8 @@ public class Unit extends Actor {
         return collider;
     }
 
-    public Texture getTexture() {
-        return texture;
+    public UnitAssets getUnitAssets() {
+        return unitAssets;
     }
 
     public int getMovement() {
@@ -108,6 +117,10 @@ public class Unit extends Actor {
 
     public void setMovement(int movement) {
         this.movement = movement;
+    }
+
+    public void decrementMovement() {
+        --this.movement;
     }
 
     public Vector2 getPosition() {
@@ -124,5 +137,9 @@ public class Unit extends Actor {
 
     public void setCoordinates(Vector2 coordinates) {
         this.coordinates = coordinates;
+    }
+
+    public void setNextCommand(UnitCommand unitCommand) {
+        unitState.setNextCommand(unitCommand);
     }
 }

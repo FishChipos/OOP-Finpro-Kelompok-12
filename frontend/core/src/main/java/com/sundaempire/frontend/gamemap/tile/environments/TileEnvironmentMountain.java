@@ -7,6 +7,7 @@ import com.sundaempire.frontend.gamemap.tile.TileEnvironment;
 public class TileEnvironmentMountain extends TileEnvironment {
     public TileEnvironmentMountain() {
         Texture texture = GameManager.INSTANCE.getAssetManager().get("textures/tiles/mountain.png");
-        super.setTexture(texture);
+        setTexture(texture);
+        setName("Mountain");
     }
 }

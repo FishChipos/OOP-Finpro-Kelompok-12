@@ -12,13 +12,15 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.sundaempire.frontend.Notifiable;
+import com.sundaempire.frontend.Observable;
 import com.sundaempire.frontend.gamemap.tile.Tile;
 import com.sundaempire.frontend.gamemap.tile.TileFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class GameMap extends Actor {
+public class GameMap extends Actor implements Observable {
     private final Vector2 origin = new Vector2();
     private final Vector2 tileDimensions = new Vector2();
     private final float gridLineThickness;
@@ -30,6 +32,8 @@ public class GameMap extends Actor {
 
     private final List<Tile> tiles;
     private Tile selectedTile;
+
+    private List<Notifiable> observers = new ArrayList<>();
 
     private float zoom;
 
@@ -115,6 +119,10 @@ public class GameMap extends Actor {
                         Vector3 input = camera.unproject(new Vector3(x, y, 0f));
 
                         GameMap.this.selectTile(input.x, input.y);
+
+                        for (Notifiable observer : observers) {
+                            observer.notice();
+                        }
                     }
                 }
 
@@ -203,5 +211,21 @@ public class GameMap extends Actor {
         for (Tile tile : tiles) {
             tile.dispose();
         }
+    }
+
+    public Tile getTile(Vector2 newCoordinates) {
+        return tiles.get(columns * (int)newCoordinates.y + (int)newCoordinates.x);
+    }
+
+    public void addObserver(Notifiable observer) {
+        observers.add(observer);
+    }
+
+    public void removeObserver(Notifiable observer) {
+        observers.remove(observer);
+    }
+
+    public Tile getSelectedTile() {
+        return selectedTile;
     }
 }

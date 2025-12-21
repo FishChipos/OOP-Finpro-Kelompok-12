@@ -1,19 +1,26 @@
 package com.sundaempire.frontend.gamemanager;
 
+import com.badlogic.gdx.Game;
+import com.sundaempire.frontend.Notifiable;
+import com.sundaempire.frontend.Observable;
 import com.sundaempire.frontend.unit.Unit;
 import com.sundaempire.frontend.unit.states.UnitStateIdle;
 import com.sundaempire.frontend.unit.states.UnitStateMoving;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-public class RoundManager {
-    private int round = 0;
-    private GameActor currentGameActor = GameActor.PLAYER_1;
+import static com.sundaempire.frontend.gamemanager.GameActor.PLAYER_1;
+
+public class RoundManager implements Observable {
+    private int round = 1;
+    private GameActor currentGameActor = PLAYER_1;
     private Map<GameActor, List<Unit>> gameActorUnits = new HashMap<>();
-    private int gameActorUnitIndex = 0;
+    private int currentUnitIndex = -1;
+    private Unit currentUnit;
+    private List<Unit> toBeAdded = new ArrayList<>();
+    private List<Unit> toBeRemoved = new ArrayList<>();
+
+    private List<Notifiable> roundChangeObservers = new ArrayList<>();
 
     public RoundManager() {
         for (GameActor gameActor : GameActor.values()) {
@@ -23,13 +30,18 @@ public class RoundManager {
 
     public void nextRound() {
         ++round;
-        currentGameActor = GameActor.PLAYER_1;
+        currentGameActor = PLAYER_1;
+
+        for (Notifiable observer : roundChangeObservers) {
+            observer.notice();
+        }
     }
 
     public void nextTurn() {
-        gameActorUnitIndex = 0;
+        updateUnitList();
+        currentUnitIndex = 0;
 
-        if (currentGameActor == GameActor.PLAYER_1) {
+        if (currentGameActor == PLAYER_1) {
             nextRound();
             return;
         }
@@ -38,32 +50,57 @@ public class RoundManager {
     }
 
     public void nextUnit() {
-        Unit unit = gameActorUnits.get(currentGameActor).get(gameActorUnitIndex);
-        unit.changeUnitState(new UnitStateIdle(unit));
-        ++gameActorUnitIndex;
+        if (currentUnit != null) {
+            currentUnit.changeUnitState(new UnitStateIdle(currentUnit));
+        }
 
-        if (gameActorUnitIndex >= gameActorUnits.get(currentGameActor).size()) {
+        ++currentUnitIndex;
+
+        if (currentUnitIndex >= gameActorUnits.get(currentGameActor).size()) {
             nextTurn();
         }
 
-        unit = gameActorUnits.get(currentGameActor).get(gameActorUnitIndex);
-        unit.changeUnitState(new UnitStateMoving(unit));
+        currentUnit = gameActorUnits.get(currentGameActor).get(currentUnitIndex);
+        currentUnit.changeUnitState(new UnitStateMoving(currentUnit));
+    }
+
+    @Override
+    public void addObserver(Notifiable observer) {
+        roundChangeObservers.add(observer);
+    }
+
+    @Override
+    public void removeObserver(Notifiable observer) {
+        roundChangeObservers.remove(observer);
+    }
+
+    public void updateUnitList() {
+        for (Unit unit : toBeRemoved) {
+            gameActorUnits.get(unit.getOwner()).remove(unit);
+        }
+
+        toBeRemoved.clear();
+
+        for (Unit unit : toBeAdded) {
+            gameActorUnits.get(unit.getOwner()).add(unit);
+        }
+
+        toBeAdded.clear();
     }
 
     public void addUnit(Unit unit) {
-        gameActorUnits.get(unit.getOwner()).add(unit);
+        toBeAdded.add(unit);
     }
 
     public void removeUnit(Unit unit) {
-        gameActorUnits.get(unit.getOwner()).remove(unit);
+        toBeRemoved.add(unit);
     }
 
     public Unit getActiveUnit() {
-        try {
-            return gameActorUnits.get(currentGameActor).get(gameActorUnitIndex);
-        }
-        catch (IndexOutOfBoundsException e) {
-            return null;
-        }
+        return currentUnit;
+    }
+
+    public int getRound() {
+        return round;
     }
 }

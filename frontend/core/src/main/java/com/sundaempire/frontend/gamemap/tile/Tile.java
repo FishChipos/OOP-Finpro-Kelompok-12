@@ -17,6 +17,7 @@ public class Tile {
 
     private boolean selected;
 
+
     public Tile() {
         selected = false;
     }
@@ -92,5 +93,13 @@ public class Tile {
         for (TileProp prop : props) {
             prop.dispose();
         }
+    }
+
+    public TileEnvironment getEnvironment() {
+        return environment;
+    }
+
+    public List<TileProp> getProps() {
+        return props;
     }
 }
